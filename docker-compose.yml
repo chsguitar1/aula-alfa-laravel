@@ -1,0 +1,20 @@
+services:
+    mysql:
+        image: mysql:8.0
+        restart: unless-stopped
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: trabalho_laravel
+        ports:
+            - "3306:3306"
+        volumes:
+            - habit-tracker-mysql:/var/lib/mysql
+        healthcheck:
+            test: ["CMD", "mysqladmin", "ping", "-uroot", "-proot"]
+            interval: 5s
+            timeout: 5s
+            retries: 10
+
+volumes:
+    habit-tracker-mysql:
+        driver: local
