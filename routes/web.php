@@ -41,7 +41,7 @@ Route::get('/user-update/{id}',function($id){
     'email' => 'email@email.com',
     'password' => '12345678'
   ]);
-  
+
 });
 
 Route::get('/user-delete/{id}', function($id){
@@ -65,7 +65,7 @@ Route::get('/user-with-profile', function(){
 
    $profile = $user->profile()->create([
     'type' => 'ADMIN',
-    'description' => 'Administrador de servidor' 
+    'description' => 'Administrador de servidor'
    ]);
 
    dd($user->load('profile'));
@@ -73,3 +73,4 @@ Route::get('/user-with-profile', function(){
 });
 
 Route::get('/admin/users',[UserController::class, 'index']);
+Route::get('/admin/user/{user}',[UserController::class, 'show'])->name('user.show');
