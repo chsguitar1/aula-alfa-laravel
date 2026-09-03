@@ -7,7 +7,7 @@ use App\Models\User;
 
 class UserController extends Controller
 {
-    
+
    public function index(){
     $users = User::paginate(5);
 
@@ -16,6 +16,11 @@ class UserController extends Controller
         'title' => 'Lista de usuario do Sistema'
     ]);
    }
-   
 
+   public function show(User $user){
+    return view('user.show',[
+        'user' => $user,
+        'title' => 'Detalhes do Usuario'
+    ]);
+   }
 }
