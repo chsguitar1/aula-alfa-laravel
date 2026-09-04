@@ -11,20 +11,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('profile', function (Blueprint $table) {
-            $table->id();
+        Schema::create('product_itens', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->foreignUuid('product_id')->constrained();
+            $table->integer('quantity');
+            $table->string('color');
+            $table->float('value');
             $table->timestamps();
-            $table->string('type');
-            $table->string('description');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
         });
     }
 
     /**
-     * Reverse the migrations.`
+     * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('profile');
+        Schema::dropIfExists('product_itens');
     }
 };
