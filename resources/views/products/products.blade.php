@@ -26,7 +26,8 @@
 
                         <ul class="space-y-2">
                             @foreach ($product->productItens as $item)
-                                <li class="flex items-center justify-between rounded-lg bg-slate-800/60 px-3 py-2 text-sm">
+                                <li
+                                    class="flex items-center justify-between rounded-lg bg-slate-800/60 px-3 py-2 text-sm">
                                     <span class="flex items-center gap-2 text-slate-300">
                                         <span class="h-2.5 w-2.5 rounded-full bg-slate-600"></span>
                                         {{ $item->quantity }}x {{ $item->color }}
@@ -36,6 +37,11 @@
                                 </li>
                             @endforeach
                         </ul>
+
+                        <a href="{{ url('/products/' . $product->id) }}"
+                            class="mt-4 inline-block text-sm font-medium text-emerald-400 hover:text-emerald-300">
+                            Detalhes
+                        </a>
                     </div>
                 </article>
             @endforeach

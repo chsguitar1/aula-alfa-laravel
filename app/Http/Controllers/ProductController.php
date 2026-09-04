@@ -10,6 +10,13 @@ class ProductController extends Controller
     {
         $products = Product::with('productItens')->get();
 
-        return view('products.index', compact('products'));
+        return view('products.products', compact('products'));
+    }
+
+    public function show(Product $product)
+    {
+        $product->load('productItens');
+
+        return view('products.show', compact('product'));
     }
 }
