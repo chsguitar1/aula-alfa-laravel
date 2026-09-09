@@ -1,6 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProductController;
+
+Route::get('/products', [ProductController::class, 'index']);
 use App\Models\User;
 use App\Http\Controllers\UserController;
 
@@ -41,7 +44,7 @@ Route::get('/user-update/{id}',function($id){
     'email' => 'email@email.com',
     'password' => '12345678'
   ]);
-  
+
 });
 
 Route::get('/user-delete/{id}', function($id){
@@ -65,7 +68,7 @@ Route::get('/user-with-profile', function(){
 
    $profile = $user->profile()->create([
     'type' => 'ADMIN',
-    'description' => 'Administrador de servidor' 
+    'description' => 'Administrador de servidor'
    ]);
 
    dd($user->load('profile'));
