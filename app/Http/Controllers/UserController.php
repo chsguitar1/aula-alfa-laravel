@@ -16,6 +16,16 @@ class UserController extends Controller
         'title' => 'Lista de usuario do Sistema'
     ]);
    }
+
+   public function show(int $id)
+   {
+    $user = new User();
+    $user = $user->show_user($id);
+  
+    return view('user.show',[
+        'user' => $user]);
+
+   }
    
 
 }

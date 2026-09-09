@@ -9,3 +9,4 @@ Route::get('/', function () {
 });
 
 Route::get('/admin/users',[UserController::class, 'index']);
+Route::get('admin/user/{user}' ,[UserController::class, 'show']);
