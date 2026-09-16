@@ -26,6 +26,24 @@ class UserController extends Controller
         'user' => $user]);
 
    }
+
+   public function register()
+   {
+    return view('user.create');
+   }
+
+   public function create(Request $request)
+   {
+    
+    $input = $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|string|email|max:255|unique:users',
+        'password' => 'required|string|min:8',
+    ]);
+
+    User::create($input);
+    return redirect()->route('admin.users.index');
+   }
    
 
 }
