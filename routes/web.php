@@ -6,12 +6,11 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('admin.users.index');
 });
 
-// Route::get('/user', function(){
-//     return ['hello word','quarto periodo'];
-// });
+Route::get('/admin/users',[UserController::class, 'index'])->name('admin.users.index');
+Route::get('admin/user/{user}' ,[UserController::class, 'show']);
 
 Route::get('/user',[User::class, 'show_user']);
 
@@ -73,6 +72,8 @@ Route::get('/user-with-profile', function(){
 
 });
 
-Route::get('/admin/users',[UserController::class, 'index']);
 
 Route::get('/products',[ProductController::class, 'index']);
+
+Route::get('register', [UserController::class, 'register']);
+Route::post('store', [UserController::class, 'create'])->name('users.store');
