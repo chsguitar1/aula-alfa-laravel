@@ -44,6 +44,26 @@ class UserController extends Controller
     User::create($input);
     return redirect()->route('admin.users.index');
    }
+
+      public function forgotPassword()
+   {
+    return view('user.forgot-password');
+   }
+
+   public function changePassword(Request $request)
+   {
+    $input = $request->validate([
+        'email' => 'required|string|email|exists:users,email',
+        'password' => 'required|string|min:8|confirmed',
+    ]);
+
+    $user = User::where('email', $input['email'])->first();
+    $user->password = $input['password'];
+    $user->save();
+
+    return redirect()->route('password.forgot')
+        ->with('status', 'Senha alterada com sucesso!');
+   }
    
 
 }
