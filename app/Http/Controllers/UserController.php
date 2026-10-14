@@ -1,49 +1,26 @@
-<?php
-
-namespace App\Http\Controllers;
-
 use Illuminate\Http\Request;
-use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
-class UserController extends Controller
+public function esqueciSenha()
 {
-    
-   public function index(){
-    $users = User::paginate(5);
+    return view('user.esqueci-senha');
+}
 
-    return view('user.index',[
-        'users' => $users,
-        'title' => 'Lista de usuario do Sistema'
-    ]);
-   }
-
-   public function show(int $id)
-   {
-    $user = new User();
-    $user = $user->show_user($id);
-  
-    return view('user.show',[
-        'user' => $user]);
-
-   }
-
-   public function register()
-   {
-    return view('user.create');
-   }
-
-   public function create(Request $request)
-   {
-    
-    $input = $request->validate([
-        'name' => 'required|string|max:255',
-        'email' => 'required|string|email|max:255|unique:users',
-        'password' => 'required|string|min:8',
+public function alterarSenha(Request $request)
+{
+    $dados = $request->validate([
+        'email'    => ['required', 'email'],
+        'password' => ['required', 'min:8', 'confirmed'],
     ]);
 
-    User::create($input);
-    return redirect()->route('admin.users.index');
-   }
-   
+    // Aqui entraria a gravação no banco:
+    // $user = User::where('email', $dados['email'])->firstOrFail();
+    // $user->password = Hash::make($dados['password']);
+    // $user->save();
 
+    $senhaCriptografada = Hash::make($dados['password']);
+
+    return redirect()
+        ->route('user.esqueci-senha')
+        ->with('success', 'Senha alterada com sucesso!');
 }
