@@ -1,15 +1,7 @@
-<?php
-
-use Illuminate\Support\Facades\Route;
-use App\Models\User;
 use App\Http\Controllers\UserController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/esqueci-senha', [UserController::class, 'esqueciSenha'])
+    ->name('user.esqueci-senha');
 
-Route::get('/admin/users',[UserController::class, 'index'])->name('admin.users.index');
-Route::get('admin/user/{user}' ,[UserController::class, 'show']);
-
-Route::get('register', [UserController::class, 'register']);
-Route::post('store', [UserController::class, 'create'])->name('users.store');
+Route::post('/esqueci-senha', [UserController::class, 'alterarSenha'])
+    ->name('user.alterar-senha');
