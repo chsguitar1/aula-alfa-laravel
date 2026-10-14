@@ -7,7 +7,7 @@ use App\Models\User;
 
 class UserController extends Controller
 {
-    
+
    public function index(){
     $users = User::paginate(5);
 
@@ -21,7 +21,7 @@ class UserController extends Controller
    {
     $user = new User();
     $user = $user->show_user($id);
-  
+
     return view('user.show',[
         'user' => $user]);
 
@@ -34,7 +34,7 @@ class UserController extends Controller
 
    public function create(Request $request)
    {
-    
+
     $input = $request->validate([
         'name' => 'required|string|max:255',
         'email' => 'required|string|email|max:255|unique:users',
@@ -44,6 +44,24 @@ class UserController extends Controller
     User::create($input);
     return redirect()->route('admin.users.index');
    }
-   
 
+   public function forgotPassword()
+   {
+    return view('user.forgot-password');
+   }
+
+   public function updatePassword(Request $request)
+   {
+    $input = $request->validate([
+        'email' => 'required|string|email|exists:users,email',
+        'password' => 'required|string|min:8|confirmed',
+    ]);
+
+    $user = User::where('email', $input['email'])->firstOrFail();
+    $user->password = $input['password'];
+    $user->save();
+
+    return redirect()->route('users.password.forgot')
+        ->with('success', 'Senha alterada com sucesso!');
+   }
 }
