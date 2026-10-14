@@ -57,8 +57,6 @@ class UserController extends Controller
     {
         $input = $request->validate(['email' => 'required|email']);
 
-        if(!$input) return view('user.resetPassword');
-
         // Volta para o formulário e envia a mensagem 'Aprovado!' (chave 'success') para a view mostrar
         return back()->with('success', 'Aprovado!');
 
