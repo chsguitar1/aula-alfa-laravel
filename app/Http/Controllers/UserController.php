@@ -44,6 +44,31 @@ class UserController extends Controller
     User::create($input);
     return redirect()->route('admin.users.index');
    }
-   
+
+   public function formRecuperarSenha()
+   {
+       return view('user.forgot-password');
+   }
+
+   public function alterarSenha(Request $request)
+   {
+       $request->validate([
+           'email'    => 'required|email|exists:users,email',
+           'password' => 'required|min:8|confirmed',
+       ], [
+           'email.required'     => 'Informe o email.',
+           'email.email'        => 'Email inválido.',
+           'email.exists'       => 'Nenhum usuário com esse email.',
+           'password.required'  => 'Informe a nova senha.',
+           'password.min'       => 'A senha precisa ter no mínimo 8 caracteres.',
+           'password.confirmed' => 'As senhas não conferem.',
+       ]);
+
+       $user = User::where('email', $request->email)->first();
+       $user->password = $request->password;
+       $user->save();
+
+       return back()->with('success', 'Senha alterada com sucesso!');
+   }
 
 }
