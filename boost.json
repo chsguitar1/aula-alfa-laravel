@@ -10,7 +10,11 @@
     "skills": [
         "infer-conventions",
         "laravel-best-practices",
+<<<<<<< HEAD
+        "testing-best-practices"
+=======
         "testing-best-practices",
         "tailwindcss-development"
+>>>>>>> 809676c2b0296ab7cb5f8b0d616893aea033e9df
     ]
 }

@@ -3,6 +3,38 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+<<<<<<< HEAD
+use Illuminate\Support\Facades\Hash;
+use App\Models\User;
+
+class UserController extends Controller {
+    
+    public function showForgotPasswordForm()
+    {
+        return view('user.forgot-password');
+    }
+
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|exists:users,email',
+            'password' => 'required|min:6',
+        ]);
+
+
+        $user = User::where('email', $request->email)->first();
+
+        if ($user) {
+            $user->password = Hash::make($request->password);
+            $user->save();
+
+            return redirect()->route('user.forgot')->with('success', 'Senha alterada com sucesso!');
+        }
+
+        return back()->withErrors(['email' => 'Usuário não encontrado.']);
+    }
+    }
+=======
 use App\Models\User;
 
 class UserController extends Controller
@@ -47,3 +79,4 @@ class UserController extends Controller
    
 
 }
+>>>>>>> 809676c2b0296ab7cb5f8b0d616893aea033e9df

@@ -16,7 +16,11 @@
     @else
         <p>Usuario com id  <> 10</p>
     @endif
+<<<<<<< HEAD
+        git
+=======
         
+>>>>>>> 809676c2b0296ab7cb5f8b0d616893aea033e9df
     @endforeach
 
     {{ $users->links() }}
