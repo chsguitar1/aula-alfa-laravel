@@ -30,10 +30,10 @@ class User extends Authenticatable
         ];
     }
 
-    public function show_user()
+    public function show_user(int $id)
     {
 
-    return ['cristiano','framework laravel'];
+        return  User::find($id);
 
     }
 
