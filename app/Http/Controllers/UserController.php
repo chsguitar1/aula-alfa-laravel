@@ -2,48 +2,37 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    
-   public function index(){
-    $users = User::paginate(5);
+    // Exibe a tela de recuperação
+   public function forgotPassword()
+    {
+        // O "user." avisa o Laravel para procurar dentro da pasta resources/views/user/
+        return view('user.forgot-password');
+    }
 
-    return view('user.index',[
-        'users' => $users,
-        'title' => 'Lista de usuario do Sistema'
-    ]);
-   }
+    // Processa a alteração da senha
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|exists:users,email',
+            'password' => 'required|min:6|confirmed',
+        ], [
+            'email.required' => 'O campo de e-mail é obrigatório.',
+            'email.exists' => 'Não foi encontrado nenhum utilizador com este e-mail.',
+            'password.required' => 'A nova senha é obrigatória.',
+            'password.confirmed' => 'A confirmação de senha não coincide.',
+            'password.min' => 'A senha deve ter pelo menos 6 caracteres.',
+        ]);
 
-   public function show(int $id)
-   {
-    $user = new User();
-    $user = $user->show_user($id);
-  
-    return view('user.show',[
-        'user' => $user]);
+        $user = User::where('email', $request->email)->first();
+        $user->password = Hash::make($request->password);
+        $user->save();
 
-   }
-
-   public function register()
-   {
-    return view('user.create');
-   }
-
-   public function create(Request $request)
-   {
-    
-    $input = $request->validate([
-        'name' => 'required|string|max:255',
-        'email' => 'required|string|email|max:255|unique:users',
-        'password' => 'required|string|min:8',
-    ]);
-
-    User::create($input);
-    return redirect()->route('admin.users.index');
-   }
-   
-
+        return redirect()->back()->with('status', 'Senha alterada com sucesso!');
+    }
 }
