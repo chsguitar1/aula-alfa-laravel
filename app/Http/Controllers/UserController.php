@@ -44,6 +44,25 @@ class UserController extends Controller
     User::create($input);
     return redirect()->route('admin.users.index');
    }
-   
+
+   public function forgotPassword()
+   {
+    return view('user.forgot-password');
+   }
+
+   public function updatePassword(Request $request)
+   {
+    $input = $request->validate([
+        'email' => 'required|string|email|max:255|exists:users,email',
+        'password' => 'required|string|min:8|confirmed',
+    ]);
+
+    $user = User::where('email', $input['email'])->firstOrFail();
+    $user->password = $input['password']; // o cast 'hashed' do model faz o hash
+    $user->save();
+
+    return redirect()->route('users.password.request')
+        ->with('status', 'Senha alterada com sucesso!');
+   }
 
 }
