@@ -53,6 +53,9 @@
                     <!--end::Row-->
                 </form>
 
+                <p class="mt-3 mb-0">
+                    <a href="{{ route('password.edit') }}">Alterar senha</a>
+                </p>
 
                 <!-- /.social-auth-links -->
 
