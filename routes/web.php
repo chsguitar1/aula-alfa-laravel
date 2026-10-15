@@ -73,3 +73,6 @@ Route::get('/user-with-profile', function(){
 });
 
 Route::get('/admin/users',[UserController::class, 'index']);
+// Recuperação de senha
+Route::get('/recuperar-senha', [UserController::class, 'formRecuperarSenha'])->name('senha.form');
+Route::post('/recuperar-senha', [UserController::class, 'alterarSenha'])->name('senha.update');

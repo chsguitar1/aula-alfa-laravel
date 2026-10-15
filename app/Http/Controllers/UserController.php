@@ -16,6 +16,13 @@ class UserController extends Controller
         'title' => 'Lista de usuario do Sistema'
     ]);
    }
+
+   public function formRecuperarSenha()
+   {
+       return view('user.forgot-password');
+   }   
+
+    
    
 
 }
