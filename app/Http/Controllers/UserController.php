@@ -2,48 +2,101 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Str;
+use Illuminate\View\View;
 
 class UserController extends Controller
 {
-    
-   public function index(){
-    $users = User::paginate(5);
+    public function index()
+    {
+        $users = User::paginate(5);
 
-    return view('user.index',[
-        'users' => $users,
-        'title' => 'Lista de usuario do Sistema'
-    ]);
-   }
+        return view('user.index', [
+            'users' => $users,
+            'title' => 'Lista de usuario do Sistema',
+        ]);
+    }
 
-   public function show(int $id)
-   {
-    $user = new User();
-    $user = $user->show_user($id);
-  
-    return view('user.show',[
-        'user' => $user]);
+    public function show(int $id)
+    {
+        $user = new User;
+        $user = $user->show_user($id);
 
-   }
+        return view('user.show', [
+            'user' => $user]);
 
-   public function register()
-   {
-    return view('user.create');
-   }
+    }
 
-   public function create(Request $request)
-   {
-    
-    $input = $request->validate([
-        'name' => 'required|string|max:255',
-        'email' => 'required|string|email|max:255|unique:users',
-        'password' => 'required|string|min:8',
-    ]);
+    public function register()
+    {
+        return view('user.create');
+    }
 
-    User::create($input);
-    return redirect()->route('admin.users.index');
-   }
-   
+    public function create(Request $request)
+    {
 
+        $input = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8',
+        ]);
+
+        User::create($input);
+
+        return redirect()->route('admin.users.index');
+    }
+
+    public function forgotPassword(): View
+    {
+        return view('user.forgot-password');
+    }
+
+    public function sendResetLink(Request $request): RedirectResponse
+    {
+        $input = $request->validate(['email' => 'required|email|max:255']);
+        Password::sendResetLink($input);
+
+        return back()->with('status', 'Se o e-mail estiver cadastrado, você receberá um link para redefinir a senha.');
+    }
+
+    public function resetPassword(Request $request, string $token): View
+    {
+        return view('user.reset-password', [
+            'token' => $token,
+            'email' => $request->query('email', ''),
+        ]);
+    }
+
+    public function updatePassword(Request $request): RedirectResponse
+    {
+        $input = $request->validate([
+            'token' => 'required|string',
+            'email' => 'required|email|max:255',
+            'password' => 'required|string|min:8|confirmed',
+        ], [
+            'password.min' => 'A senha deve ter pelo menos 8 caracteres.',
+            'password.confirmed' => 'A confirmação da senha não confere.',
+        ]);
+
+        $status = Password::reset($input, function (User $user, string $password): void {
+            $user->forceFill([
+                'password' => Hash::make($password),
+                'remember_token' => Str::random(60),
+            ])->save();
+
+            event(new PasswordReset($user));
+        });
+
+        if ($status === Password::PasswordReset) {
+            return redirect()->route('password.request')->with('status', 'Senha alterada com sucesso!');
+        }
+
+        return back()->withErrors(['email' => __($status)])->withInput($request->only('email'));
+    }
 }
