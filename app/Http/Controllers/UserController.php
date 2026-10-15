@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -44,6 +45,28 @@ class UserController extends Controller
     User::create($input);
     return redirect()->route('admin.users.index');
    }
-   
+
+    public function alterarSenha(Request $request)
+{
+    $input = $request->validate([
+        'email' => 'required|email',
+        'password' => 'required|string|min:8|confirmed',
+    ]);
+
+    $user = User::where('email', $input['email'])->first();
+
+    if (!$user) {
+        return back()
+            ->withErrors(['email' => 'E-mail não encontrado.'])
+            ->withInput($request->only('email'));
+    }
+
+    $user->password = Hash::make($input['password']);
+    $user->save();
+
+    return redirect()
+        ->route('senha.formulario')
+        ->with('success', 'Senha alterada com sucesso!');
+}
 
 }
