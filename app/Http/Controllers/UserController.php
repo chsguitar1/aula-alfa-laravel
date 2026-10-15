@@ -8,6 +8,28 @@ use App\Models\User;
 class UserController extends Controller
 {
     
+public function recuperarSenha()
+{
+    return view('user.recuperar-senha');
+}
+
+public function alterarSenha(Request $request)
+{
+    $input = $request->validate([
+        'email' => 'required|email|exists:users,email',
+        'password' => 'required|string|min:8|confirmed',
+    ]);
+
+    $user = User::where('email', $input['email'])->firstOrFail();
+
+    $user->password = $input['password'];
+    $user->save();
+
+    return redirect()->route('senha.formulario')
+        ->with('sucesso', 'Senha alterada com sucesso!');
+}
+
+    
    public function index(){
     $users = User::paginate(5);
 
