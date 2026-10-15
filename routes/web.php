@@ -13,3 +13,11 @@ Route::get('admin/user/{user}' ,[UserController::class, 'show']);
 
 Route::get('register', [UserController::class, 'register']);
 Route::post('store', [UserController::class, 'create'])->name('users.store');
+
+
+Route::get('/recuperar-senha', function () {
+    return view('user.recover');
+})->name('senha.formulario');
+
+Route::post('/recuperar-senha', [UserController::class, 'alterarSenha'])
+    ->name('senha.alterar');
