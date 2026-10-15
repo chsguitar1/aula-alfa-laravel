@@ -13,3 +13,9 @@ Route::get('admin/user/{user}' ,[UserController::class, 'show']);
 
 Route::get('register', [UserController::class, 'register']);
 Route::post('store', [UserController::class, 'create'])->name('users.store');
+
+Route::get('/recuperar-senha', [UserController::class, 'recuperarSenha'])
+    ->name('senha.formulario');
+
+Route::post('/alterar-senha', [UserController::class, 'alterarSenha'])
+    ->name('senha.alterar');
