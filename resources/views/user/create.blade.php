@@ -12,31 +12,39 @@
 
                 <form action="{{ route('users.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
-                    {{ $errors->any() }}
-                    @if ($errors->any())
-                        @foreach ($errors->all() as $error)
-                            <div class="error">{{ $error }}</div>
-                        @endforeach
-                    @endif
+
                     <label class="visually-hidden" for="name">Nome</label>
                     <div class="input-group mb-3">
-                        <input id="name" name="name" type="text" class="form-control" placeholder="Nome" />
+                        <input id="name" name="name" type="text"
+                            class="form-control @error('name') is-invalid @enderror" placeholder="Nome" />
                         <div class="input-group-text">
                             <span class="bi bi-person"></span>
                         </div>
                     </div>
                     <label class="visually-hidden" for="email">Email</label>
                     <div class="input-group mb-3">
-                        <input id="email" name="email" type="email" class="form-control" placeholder="Email" />
+                        <input id="email" name="email" type="email"
+                            class="form-control @error('email') is-invalid @enderror" placeholder="Email" />
                         <div class="input-group-text">
                             <span class="bi bi-envelope"></span>
+                        </div>
+                        <div class="invalid-feedback">
+                            @error('email')
+                                {{ $message }}
+                            @enderror
                         </div>
                     </div>
                     <label class="visually-hidden" for="password">Password</label>
                     <div class="input-group mb-3">
-                        <input id="password" name="password" type="password" class="form-control" placeholder="Password" />
+                        <input id="password" name="password" type="password"
+                            class="form-control @error('password') is-invalid @enderror" placeholder="Password" />
                         <div class="input-group-text">
                             <span class="bi bi-lock-fill"></span>
+                        </div>
+                        <div class="invalid-feedback">
+                            @error('password')
+                                {{ $message }}
+                            @enderror
                         </div>
                     </div>
                     <!--begin::Row-->
