@@ -13,3 +13,8 @@ Route::get('admin/user/{user}' ,[UserController::class, 'show']);
 
 Route::get('register', [UserController::class, 'register']);
 Route::post('store', [UserController::class, 'create'])->name('users.store');
+
+Route::get('/forgot-password', [UserController::class, 'forgotPassword'])->name('users.password.form');
+Route::post('/forgot-password', [UserController::class, 'sendPasswordResetLink'])->name('users.password.email');
+Route::get('/reset-password/{token}', [UserController::class, 'resetPassword'])->name('password.reset');
+Route::post('/reset-password', [UserController::class, 'updatePassword'])->name('users.password.update');
