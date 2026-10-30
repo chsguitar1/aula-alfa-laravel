@@ -1,176 +1,136 @@
 @extends('layouts.default')
-@section('classe-body', 'register-page', 'register-page bg-body-secondary')
+
 @section('content')
-    <div class="row justify-content-center">
-        <div class="col-12 col-xl-9">
-            <main class="register-box w-100 mx-auto" style="max-width: 900px;">
-                <h1 class="register-logo text-center">
-                    <a href="../index2.html"><b>Bem vindo</b></a>
-                </h1>
-                <div class="card">
-                    <div class="card-body register-card-body">
-                        <p class="register-box-msg">Preencha os campos para se registrar</p>
+<div class="row justify-content-center">
+    <div class="col-12 col-xl-9">
 
-                        <form action="{{ route('admin.user.update', $user->id) }}" method="POST" enctype="multipart/form-data">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Editar usuário</h3>
+            </div>
+
+            <div class="card-body">
+
+                @if(session('success'))
+                    <div class="alert alert-success">
+                        {{ session('success') }}
+                    </div>
+                @endif
+
+                @if($errors->has('profile'))
+                    <div class="alert alert-danger">
+                        {{ $errors->first('profile') }}
+                    </div>
+                @endif
+
+                <form action="{{ route('admin.user.update', $user->id) }}"
+                      method="POST">
                     @csrf
                     @method('PUT')
-                    <div class="card-header">
-                        Dados do usuário
+
+                    <h5 class="mb-3">Dados do usuário</h5>
+
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Nome</label>
+                        <input type="text"
+                               id="name"
+                               name="name"
+                               value="{{ old('name', $user->name) }}"
+                               class="form-control @error('name') is-invalid @enderror"
+                               required>
+
+                        @error('name')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
-                    <div class="card-body">
-                        <label class="visually-hidden" for="name">Nome</label>
-                        <div class="input-group mb-3">
-                            <input id="name" name="name" type="text"
-                                class="form-control @error('name') is-invalid @enderror" placeholder="Nome"
-                                value="{{ $user->name }}" />
-                            <div class="input-group-text">
-                                <span class="bi bi-person"></span>
-                            </div>
-                        </div>
-                        <label class="visually-hidden" for="email">Email</label>
-                        <div class="input-group mb-3">
-                            <input id="email" name="email" type="email"
-                                class="form-control @error('email') is-invalid @enderror" placeholder="Email"
-                                value="{{ $user->email }}" />
-                            <div class="input-group-text">
-                                <span class="bi bi-envelope"></span>
-                            </div>
-                            <div class="invalid-feedback">
-                                @error('email')
-                                    {{ $message }}
-                                @enderror
-                            </div>
-                        </div>
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email"
+                               id="email"
+                               name="email"
+                               value="{{ old('email', $user->email) }}"
+                               class="form-control @error('email') is-invalid @enderror"
+                               required>
+
+                        @error('email')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
-                    <div class="card-footer"></div>
 
-
-
-                    <!--begin::Row-->
-                    <div class="row" flex="true" style="display: flex; justify-content: center;">
-
-                        <!-- /.col -->
-                        <div class="col-4">
-                            <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-primary">Enviar</button>
-                            </div>
-                        </div>
-                        <!-- /.col -->
-                    </div>
-                    <!--end::Row-->
+                    <button type="submit" class="btn btn-primary">
+                        Salvar dados
+                    </button>
                 </form>
-                <br>
-                <form action="{{ route('admin.user.updateProfile', $user->id) }}" method="POST"
-                    enctype="multipart/form-data">
-                    @csrf
-                    @method('PUT')
-                    <div class="card-header">
-                        Perfil
+
+                <hr class="my-4">
+
+                <h5 class="mb-3">Perfil</h5>
+
+                @if($user->profile?->type === 'admin')
+                    <div class="alert alert-info">
+                        Este usuário possui perfil administrativo.
+                        O tipo não pode ser alterado neste formulário.
                     </div>
-                    <div class="card-body">
-                        <label for="type">Tipo de pessoa</label>
-                        <select name="type" class="form-control @error('type') is-invalid @enderror">
-                            @foreach (['PJ', 'PF'] as $type)
-                                <option value="{{ $type }}" @selected((old('type') ?? $user->profile?->type) == $type)>
-                                    {{ $type }}
-                                </option>
-                            @endforeach
-                        </select>
-                        <div class="invalid-feedback">
+                @else
+                    <form action="{{ route('admin.user.profile.update', $user->id) }}"
+                          method="POST">
+                        @csrf
+                        @method('PUT')
+
+                        <div class="mb-3">
+                            <label for="type" class="form-label">
+                                Tipo de pessoa
+                            </label>
+                            <select name="type"
+                                    id="type"
+                                    class="form-select @error('type') is-invalid @enderror"
+                                    required>
+                                @foreach(['PF', 'PJ'] as $type)
+                                    <option value="{{ $type }}"
+                                        @selected(old('type', $user->profile?->type ?? 'PF') === $type)>
+                                        {{ $type }}
+                                    </option>
+                                @endforeach
+                            </select>
+
                             @error('type')
-                                {{ $message }}
+                                <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-                        <label class="visually-hidden" for="address">Endereço</label>
-                        <div class="input-group mb-3">
-                            <input id="address" name="address" type="text"
-                                class="form-control @error('address') is-invalid @enderror" placeholder="Endereço"
-                                value="{{ old('address') ?? $user->profile?->address }}" />
-                            <div class="input-group-text">
-                                <span class="bi bi-envelope"></span>
-                            </div>
-                            <div class="invalid-feedback">
-                                @error('address')
-                                    {{ $message }}
-                                @enderror
-                            </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">
+                                Descrição
+                            </label>
+                            <input type="text"
+                                   id="description"
+                                   name="description"
+                                   value="{{ old('description', $user->profile?->description) }}"
+                                   class="form-control @error('description') is-invalid @enderror"
+                                   maxlength="255">
+
+                            @error('description')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
-                    </div>
-                    <div class="card-footer"></div>
 
+                        <button type="submit" class="btn btn-primary">
+                            Salvar perfil
+                        </button>
+                    </form>
+                @endif
 
+            </div>
 
-                    <!--begin::Row-->
-                    <div class="row" flex="true" style="display: flex; justify-content: center;">
-
-                        <!-- /.col -->
-                        <div class="col-4">
-                            <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-primary">Enviar</button>
-                            </div>
-                        </div>
-                        <!-- /.col -->
-                    </div>
-                    <!--end::Row-->
-                </form>
-
-                <br>
-
-                <form action="{{ route('admin.user.updateLanguages', $user->id) }}" method="POST"
-                    enctype="multipart/form-data">
-                    @csrf
-                    @method('PUT')
-
-                    <div class="card-header">
-                        Linguagens de programação
-                    </div>
-
-                    <div class="card-body">
-                        @foreach (['PHP', 'JavaScript', 'Python', 'Java', 'C#'] as $language)
-                            <div class="form-check mb-3">
-                                {{-- <input class="form-check-input  @error('languages') is-invalid @enderror" type="checkbox"
-                                    id="check-{{ $language }}" name="languages[][language]"
-                                    value="{{ $language }}" @if ($user->languages->contains('language', $language)) checked @endif> --}}
-
-                                    <input class="form-check-input  @error('languages') is-invalid @enderror" type="checkbox"
-                                    id="check-{{ $language }}" name="languages[][language]"
-                                    value="{{ $language }}" @checked(in_array($language, $user->languages->pluck('language')->toArray()))>
-                                <label class="form-check-label"
-                                    for="check-{{ $language }}">{{ $language }}</label>
-                            </div>
-                            @if ($loop->last)
-                                <div class="invalid-feedback">
-                                    @error('languages')
-                                        {{ $message }}
-                                    @enderror
-                                </div>
-                            @endif
-                        @endforeach
-
-                    </div>
-                    <div class="card-footer"></div>
-
-
-
-                    <!--begin::Row-->
-                    <div class="row" flex="true" style="display: flex; justify-content: center;">
-
-                        <!-- /.col -->
-                        <div class="col-4">
-                            <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-primary">Enviar</button>
-                            </div>
-                        </div>
-                        <!-- /.col -->
-                    </div>
-                    <!--end::Row-->
-                        </form>
-                        <!-- /.social-auth-links -->
-
-                    </div>
-                    <!-- /.register-card-body -->
-                </div>
-            </main>
+            <div class="card-footer">
+                <a href="{{ route('admin.users.index') }}"
+                   class="btn btn-secondary">
+                    Voltar para usuários
+                </a>
+            </div>
         </div>
+
     </div>
+</div>
 @endsection
