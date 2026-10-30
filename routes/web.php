@@ -17,4 +17,16 @@ Route::post('store', [UserController::class, 'store'])->name('users.store');
 Route::prefix('admin')->middleware(EnsureAdmin::class)->group(function () {
     Route::get('/users', [UserController::class, 'index'])->name('admin.users.index');
    
+
+    Route::get('/forgot-password', function () {
+    return view('auth.forgot-password');
+})->name('password.request');
+
+Route::post('/forgot-password', [UserController::class, 'changePassword'])
+    ->name('password.update');Route::get('/forgot-password', function () {
+    return view('auth.forgot-password');
+})->name('password.request');
+
+Route::post('/forgot-password', [UserController::class, 'changePassword'])
+    ->name('password.update');
 });
