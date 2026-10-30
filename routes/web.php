@@ -32,6 +32,28 @@ Route::get('/register', [UserController::class, 'register'])
 Route::post('/store', [UserController::class, 'store'])
     ->name('users.store');
 
+// Recuperação de senha
+Route::middleware('guest')->group(function () {
+
+    // Página para solicitar a recuperação.
+    Route::get('/forgot-password', [UserController::class, 'forgotPassword'])
+        ->name('password.request');
+
+    // Recebe o email e solicita o link de recuperação.
+    Route::post('/forgot-password', [UserController::class, 'sendResetLink'])
+        ->middleware('throttle:5,1')
+        ->name('password.email');
+
+    // Página para definir a nova senha usando um token.
+    Route::get('/reset-password/{token}', [UserController::class, 'resetPasswordForm'])
+        ->name('password.reset');
+
+    // Valida o token e atualiza a senha.
+    Route::post('/reset-password', [UserController::class, 'resetPassword'])
+        ->middleware('throttle:5,1')
+        ->name('password.update');
+});
+
 // Área administrativa
 Route::prefix('admin')
     ->middleware(['auth', EnsureAdmin::class])
