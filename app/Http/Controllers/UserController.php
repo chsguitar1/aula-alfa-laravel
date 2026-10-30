@@ -121,6 +121,21 @@ class UserController extends Controller
        $user->delete();
        return redirect()->route('admin.users.index')->with('success', 'Usuário excluído com sucesso!');
    }
+public function changePassword(Request $request)
+{
+    $input = $request->validate([
+        'email' => 'required|email|exists:users,email',
+        'password' => 'required|string|min:8|confirmed',
+    ]);
 
+    $user = User::where('email', $input['email'])->firstOrFail();
+
+    $user->update([
+        'password' => $input['password']
+    ]);
+
+    return redirect('/')
+        ->with('success', 'Senha alterada com sucesso!');
+}
 
 }
