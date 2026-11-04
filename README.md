@@ -56,3 +56,48 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+---
+
+## Autenticação e área administrativa (atividade)
+
+### Como rodar localmente
+```bash
+cp .env.example .env   # (ou crie o .env) e configure o banco
+php artisan key:generate
+php artisan migrate:fresh --seed   # cria o admin de demonstração (somente local/testing)
+npm install && npm run build   # Node 26 (.nvmrc)
+php artisan test --compact
+```
+Se o seu banco local já tinha uma tabela `profiles` (em vez de `profile`), use `migrate:fresh`.
+
+Contas de demonstração (apenas ambiente local):
+
+| Perfil | Email | Senha |
+|---|---|---|
+| Administrador | `admin@example.com` | `admin-local-123` (ou `SEED_ADMIN_PASSWORD` no `.env`) |
+| Comum | crie em `/register` | a que você escolher (mín. 8 caracteres) |
+
+### Rotas
+| Rota | Acesso |
+|---|---|
+| `GET /` | autenticado (visitante → `/login`) |
+| `GET /login`, `POST /login` | público; o POST tem `throttle:login` |
+| `POST /logout` | autenticado |
+| `GET /register`, `POST /store` | público (sempre cria usuário comum) |
+| `/admin/*` (todas) | middleware `admin` (`EnsureAdmin`): visitante → `/login`, sem perfil admin → 403 |
+
+### Limite de tentativas de login
+Definido em `AppServiceProvider` (`RateLimiter::for('login', …)`): **5 requisições por minuto para cada combinação email + IP**. Ao estourar, o usuário volta ao formulário com a mensagem "Muitas tentativas… tente novamente em N segundos" (mesmo a senha correta é recusada até a janela expirar). O contador fica no cache da aplicação. Limitações: um atacante que troque de IP/rede ou teste muitos emails diferentes escapa do limite por chave; o ideal é somar limites por IP e por email, senhas fortes e monitoramento. Também pode bloquear temporariamente o dono legítimo da conta.
+
+### Schema de `profile`
+- A migration original cria a tabela `profile` (singular); o model agora declara `$table = 'profile'`.
+- A coluna nasceu como `description` (NOT NULL) e foi renomeada para `address` por outra migration que apontava para `profiles` (quebrava em banco novo). Ela foi tornada tolerante (localiza a tabela real e só renomeia se necessário), e uma **nova** migration torna `address` nullable, como o formulário já assumia.
+- O tipo administrativo é `profile.type = 'admin'`. O formulário de perfil só aceita `PF`/`PJ` e preserva o tipo `admin` quando existe.
+
+### Perguntas para reflexão
+- **Por que um autenticado ainda recebe 403?** Autenticação diz *quem você é*; autorização diz *o que você pode fazer*. Estar logado não implica ter perfil `admin`.
+- **Risco de só esconder o botão?** Esconder é só UX: qualquer um pode digitar a URL ou forjar a requisição. A regra precisa ser validada no servidor (middleware).
+- **Por que logout é POST + CSRF?** GET deve ser seguro/sem efeito colateral; um link ou `<img src="/logout">` em outro site deslogaria a vítima (CSRF de logout). POST com token garante que a ação partiu do nosso formulário.
+- **Limite de tentativas: ajuda e limitações?** Ver seção acima.
+- **Primeiro administrador sem expor ao público?** Seeder/comando artisan executado pelo responsável do ambiente (aqui, `AdminUserSeeder`, restrito a local/testing); em produção, um comando interativo ou `tinker` com senha própria, nunca um formulário ou campo `type` aceito do cliente.

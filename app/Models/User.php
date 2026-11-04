@@ -46,6 +46,11 @@ class User extends Authenticatable
       return $this->hasOne(Profile::class);
     }
     
+    public function isAdmin(): bool
+    {
+        return $this->profile?->type === Profile::TYPE_ADMIN;
+    }
+
     public function languages(){
       return $this->hasMany(UserLanguages::class);
     }
