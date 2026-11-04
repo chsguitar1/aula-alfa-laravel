@@ -42,12 +42,15 @@ class UserController extends Controller
         'password' => 'required|string|min:8',
     ]);
 
+    // Somente name/email/password: nenhum perfil (muito menos "admin") é criado no cadastro.
     User::create($input);
 
-    if ($request->user()?->profile?->type === 'admin') {
+    // Administrador autenticado cadastrando pelo painel volta para a lista administrativa.
+    if ($request->user()?->isAdmin()) {
         return redirect()->route('admin.users.index')->with('success', 'Usuário criado com sucesso!');
     }
 
+    // Cadastro público: segue para o login com confirmação.
     return redirect()->route('login')->with('success', 'Cadastro realizado com sucesso. Faça login para continuar.');
 
    }
@@ -93,10 +96,14 @@ class UserController extends Controller
            ],
        ]);
        
-       Profile::updateOrCreate(
-           ['user_id' => $user->id],
-           $input
-       );
+       $profile = Profile::firstOrNew(['user_id' => $user->id]);
+
+       // O formulário só oferece PF/PJ: nunca rebaixa (nem promove) um perfil administrativo por aqui.
+       if ($profile->type === Profile::TYPE_ADMIN) {
+           $input['type'] = Profile::TYPE_ADMIN;
+       }
+
+       $profile->fill($input)->save();
 
        return redirect()->route('admin.users.index')->with('success', 'Perfil atualizado com sucesso!');
    }

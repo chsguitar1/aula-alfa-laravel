@@ -8,15 +8,21 @@ use Symfony\Component\HttpFoundation\Response;
 
 class EnsureAdmin
 {
+    /**
+     * Autenticação != autorização:
+     *  - visitante           -> redireciona para /login (guarda o destino pretendido);
+     *  - autenticado comum   -> 403;
+     *  - perfil type = admin -> segue.
+     */
     public function handle(Request $request, Closure $next): Response
     {
-        // Visitantes precisam autenticar antes de acessar qualquer rota administrativa.
-        if (! $request->user()) {
+        $user = $request->user();
+
+        if (! $user) {
             return redirect()->guest(route('login'));
         }
 
-        // Estar autenticado não basta: o perfil precisa ter o tipo administrativo.
-        abort_unless($request->user()->profile?->type === 'admin', 403);
+        abort_unless($user->isAdmin(), 403);
 
         return $next($request);
     }

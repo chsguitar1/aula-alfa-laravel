@@ -1,17 +1,16 @@
 @extends('layouts.default')
 @section('classe-body', 'register-page', 'register-page bg-body-secondary')
 @section('content')
-    <div class="row justify-content-center">
-        <div class="col-12 col-xl-9">
-            <main class="register-box w-100 mx-auto" style="max-width: 900px;">
-                <h1 class="register-logo text-center">
-                    <a href="../index2.html"><b>Bem vindo</b></a>
-                </h1>
-                <div class="card">
-                    <div class="card-body register-card-body">
-                        <p class="register-box-msg">Preencha os campos para se registrar</p>
+    <main class="register-box">
+        <h1 class="register-logo">
+            <a href="../index2.html"><b>Bem vindo</b></a>
+        </h1>
+        <!-- /.register-logo -->
+        <div class="card">
+            <div class="card-body register-card-body">
+                <p class="register-box-msg">Preencha os campos para se registrar</p>
 
-                        <form action="{{ route('admin.user.update', $user->id) }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('admin.user.update', $user->id) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
                     <div class="card-header">
@@ -164,13 +163,11 @@
                         <!-- /.col -->
                     </div>
                     <!--end::Row-->
-                        </form>
-                        <!-- /.social-auth-links -->
+                </form>
+                <!-- /.social-auth-links -->
 
-                    </div>
-                    <!-- /.register-card-body -->
-                </div>
-            </main>
+            </div>
+            <!-- /.register-card-body -->
         </div>
-    </div>
+    </main>
 @endsection

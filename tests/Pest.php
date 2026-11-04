@@ -16,6 +16,8 @@ use Tests\TestCase;
 
 pest()->extend(TestCase::class)
  // ->use(RefreshDatabase::class)
+    // Os testes não dependem do build do Vite (public/build não é versionado).
+    ->beforeEach(fn () => $this->withoutVite())
     ->in('Feature');
 
 /*
