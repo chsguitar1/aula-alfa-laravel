@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\DB;
 use App\Models\User;
+use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
@@ -67,7 +71,7 @@ class UserController extends Controller
             $user = User::create($input);
 
             // Todo cadastro recebe perfil comum.
-            // O cadastro público nunca cria administradores.
+            // Nunca cria administrador pelo formulário público.
             $user->profile()->create([
                 'type' => 'PF',
                 'description' => 'Usuário comum',
@@ -94,8 +98,6 @@ class UserController extends Controller
     // Exibe o formulário de edição.
     public function edit($id)
     {
-        // Carrega somente o perfil.
-        // O projeto inicial não possui a tabela de linguagens.
         $user = User::with('profile')->findOrFail($id);
 
         return view('user.edit', [
@@ -137,8 +139,8 @@ class UserController extends Controller
     // Atualiza o perfil do usuário.
     public function updateProfile(User $user, Request $request)
     {
-        // Impede alterações em perfis administrativos
-        // através do formulário comum de edição.
+        // Impede alterar o perfil administrativo
+        // pelo formulário comum de edição.
         if ($user->profile?->type === 'admin') {
             return redirect()
                 ->route('admin.users.index')
@@ -161,7 +163,7 @@ class UserController extends Controller
             ],
         ]);
 
-        // Atualiza ou cria o perfil.
+        // Cria ou atualiza o perfil.
         $user->profile()->updateOrCreate(
             [],
             [
@@ -190,6 +192,112 @@ class UserController extends Controller
             ->with(
                 'success',
                 'Usuário excluído com sucesso!'
+            );
+    }
+
+    // Exibe a página de recuperação de senha.
+    public function forgotPassword()
+    {
+        return view('auth.forgot-password');
+    }
+
+    // Solicita o link de recuperação por email.
+    public function sendResetLink(Request $request)
+    {
+        $request->validate([
+            'email' => [
+                'required',
+                'email',
+                'max:255',
+            ],
+        ]);
+
+        $status = Password::sendResetLink(
+            $request->only('email')
+        );
+
+        // Impede solicitações repetidas rapidamente.
+        if ($status === Password::RESET_THROTTLED) {
+            return back()->withErrors([
+                'email' => 'Aguarde antes de solicitar outro link.',
+            ]);
+        }
+
+        // Não informa se o email existe no banco.
+        return back()->with(
+            'status',
+            'Se o email estiver cadastrado, você receberá um link para recuperar sua senha.'
+        );
+    }
+
+    // Exibe o formulário para definir uma nova senha.
+    public function resetPasswordForm(
+        Request $request,
+        string $token
+    ) {
+        return view('auth.reset-password', [
+            'token' => $token,
+            'email' => $request->query('email', ''),
+        ]);
+    }
+
+    // Valida o token e altera a senha.
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'token' => [
+                'required',
+                'string',
+            ],
+            'email' => [
+                'required',
+                'email',
+            ],
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'confirmed',
+            ],
+        ]);
+
+        $status = Password::reset(
+            $request->only(
+                'email',
+                'password',
+                'password_confirmation',
+                'token'
+            ),
+            function (User $user, string $password) {
+                // Salva a senha criptografada.
+                $user->forceFill([
+                    'password' => Hash::make($password),
+                ]);
+
+                // Renova o token de lembrar login.
+                $user->setRememberToken(Str::random(60));
+
+                $user->save();
+
+                event(new PasswordReset($user));
+            }
+        );
+
+        // Token inválido, expirado ou email incorreto.
+        if ($status !== Password::PASSWORD_RESET) {
+            return back()
+                ->withInput($request->only('email'))
+                ->withErrors([
+                    'email' =>
+                        'Não foi possível alterar a senha. Solicite um novo link de recuperação.',
+                ]);
+        }
+
+        return redirect()
+            ->route('login')
+            ->with(
+                'success',
+                'Senha alterada com sucesso! Faça login com a nova senha.'
             );
     }
 }
