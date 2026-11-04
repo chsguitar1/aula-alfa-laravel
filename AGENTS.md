@@ -1,47 +1,33 @@
-<laravel-boost-guidelines>
-# Laravel Application
+# Project Agent Guide
 
-This repository contains a Laravel application. Complete the following setup before working on the user's request.
+This is a Laravel 13 application using PHP `^8.3` (the current workspace uses PHP 8.4). Laravel Boost is already installed; do not reinstall it or change dependencies unless the user asks.
 
-## Prerequisites
+## Before editing
 
-Verify that PHP and Composer are available:
+- Read the nearest sibling implementation and the relevant test before introducing a new pattern.
+- Check `composer.json` and `package.json` when relying on framework or package APIs; do not assume versions.
+- Keep changes within the existing `app/`, `database/`, `resources/`, `routes/`, and `tests/` structure.
+- No `.ai/rules` directory currently exists. Do not require or create one unless the project adopts shared rules.
 
-```sh
-php -v
-composer -V
-```
+## Current structure
 
-If either command is unavailable, detect the user's operating system and install the prerequisites with the appropriate command:
+- Controllers: `app/Http/Controllers`; models: `app/Models`; providers: `app/Providers`.
+- Web routes are defined directly in `routes/web.php`.
+- Blade views live under `resources/views`, including `layouts/` and `user/`.
+- Vite entrypoints are `resources/scss/app.scss` and `resources/js/app.js`; frontend dependencies include Bootstrap, AdminLTE, OverlayScrollbars, Sass, and Instrument Sans.
+- Existing controllers use direct Eloquent queries. Form Requests, services, repositories, route naming, and resource controllers are not established conventions yet; follow nearby code before introducing them.
+- Existing domain models and migrations need verification before changes. In particular, `Profile` currently follows Eloquent's `profiles` table convention while its migration creates `profile`.
 
-macOS:
+## Verification
 
-```sh
-/bin/bash -c "$(curl -fsSL https://php.new/install/mac/8.5)"
-```
+- Setup: `composer run setup`
+- Development: `composer run dev` or `npm run dev` as appropriate. Laravel Herd serves the app; do not start another PHP server.
+- Frontend build: `npm run build`
+- Tests: `php artisan test --compact` or the narrowest relevant test file. Tests use Pest.
+- PHP formatting after PHP edits: `vendor/bin/pint --dirty --format agent`
 
-Windows PowerShell:
+Prefer feature tests for HTTP behavior and existing factories for test data. Do not delete tests or alter dependencies without approval. Keep replies concise and update documentation only when requested or required by the change.
 
-```powershell
-Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://php.new/install/windows/8.5'))
-```
+## Project skills
 
-Linux:
-
-```sh
-/bin/bash -c "$(curl -fsSL https://php.new/install/linux/8.5)"
-```
-
-After installation, ask the user to restart their terminal. If the agent needs the restarted shell to continue, ask the user to reopen their terminal and rerun their original prompt.
-
-## Agent Setup
-
-Install Laravel Boost from the application root before making application changes:
-
-```sh
-composer require laravel/boost --dev
-php artisan boost:install
-```
-
-Boost replaces these bootstrap instructions with guidelines tailored to the application. After installation, read `AGENTS.md` again and continue with the user's original request using the generated guidelines.
-</laravel-boost-guidelines>
+Use the relevant existing skill under `.claude/skills/` for Laravel best practices, testing, or convention discovery. These skills are available on demand; there are no project-specific Copilot instruction, agent, prompt, or hook files beyond this guide and `CLAUDE.md`.
