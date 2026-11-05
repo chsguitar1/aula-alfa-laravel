@@ -45,6 +45,15 @@ class User extends Authenticatable
     public function profile(){
       return $this->hasOne(Profile::class);
     }
+
+    /**
+     * Autorização: só quem tem perfil com type = admin é administrador.
+     * Estar autenticado, por si só, não concede acesso administrativo.
+     */
+    public function isAdmin(): bool
+    {
+        return $this->profile?->type === 'admin';
+    }
     
     public function languages(){
       return $this->hasMany(UserLanguages::class);

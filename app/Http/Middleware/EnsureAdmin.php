@@ -16,7 +16,7 @@ class EnsureAdmin
         }
 
         // Estar autenticado não basta: o perfil precisa ter o tipo administrativo.
-        abort_unless($request->user()->profile?->type === 'admin', 403);
+        abort_unless($request->user()->isAdmin(), 403);
 
         return $next($request);
     }
