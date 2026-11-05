@@ -44,7 +44,7 @@ class UserController extends Controller
 
     User::create($input);
 
-    if ($request->user()?->profile?->type === 'admin') {
+    if ($request->user()?->isAdmin()) {
         return redirect()->route('admin.users.index')->with('success', 'Usuário criado com sucesso!');
     }
 

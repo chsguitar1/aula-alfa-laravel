@@ -133,7 +133,7 @@
                                     value="{{ $language }}" @if ($user->languages->contains('language', $language)) checked @endif> --}}
 
                                     <input class="form-check-input  @error('languages') is-invalid @enderror" type="checkbox"
-                                    id="check-{{ $language }}" name="languages[][language]"
+                                    id="check-{{ $language }}" name="languages[]"
                                     value="{{ $language }}" @checked(in_array($language, $user->languages->pluck('language')->toArray()))>
                                 <label class="form-check-label"
                                     for="check-{{ $language }}">{{ $language }}</label>
