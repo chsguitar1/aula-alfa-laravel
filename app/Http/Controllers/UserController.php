@@ -6,121 +6,119 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\User;
-use App\Models\Profile;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
-    
-   public function index(){
-    $users = User::paginate(5);
 
-    return view('user.index',[
-        'users' => $users,
-        'title' => 'Lista de usuario do Sistema'
-    ]);
-   }
+    public function index()
+    {
+        $users = User::paginate(5);
 
-   public function show($id)
-   {
-    $user = User::find($id);
-  
-    return view('user.show',[
-        'user' => $user]);
-
-   }
-
-   public function register()
-   {
-       return view('user.create');
-   }
-
-   public function store(Request $request)
-   {
-    $input = $request->validate([
-        'name' => 'required|string|max:255',
-        'email' => 'required|string|email|max:255|unique:users',
-        'password' => 'required|string|min:8',
-    ]);
-
-    User::create($input);
-
-    if ($request->user()?->profile?->type === 'admin') {
-        return redirect()->route('admin.users.index')->with('success', 'Usuário criado com sucesso!');
+        return view('user.index', [
+            'users' => $users,
+            'title' => 'Lista de usuario do Sistema'
+        ]);
     }
 
-    return redirect()->route('login')->with('success', 'Cadastro realizado com sucesso. Faça login para continuar.');
+    public function show(int $id)
+    {
+        $user = new User();
+        $user = $user->show_user($id);
 
-   }
+        return view('user.show', [
+            'user' => $user
+        ]);
 
+    }
 
-   public function edit($id)
-   {
-       $user = User::find($id);
-       $user->load('profile','languages');
-       return view('user.edit', [
-           'user' => $user
-       ]);
-   }
+    public function register()
+    {
+        return view('user.create');
+    }
 
-   public function update(Request $request, $id)
-   {
-       $user = User::findOrFail($id);
-       $input = $request->validate([
-           'name' => 'required|string|max:255',
-           'email' => [
-               'required',
-               'string',
-               'email',
-               'max:255',
-               Rule::unique('users', 'email')->ignore($user->id),
-           ],
-       ]);
+    public function create(Request $request)
+    {
 
-       $user->update($input);
+        $input = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8',
+        ]);
 
-       return redirect()->route('admin.users.index')->with('success', 'Usuário atualizado com sucesso!');
-   }
+        DB::transaction(function () use ($input) {
+            $user = User::create($input);
 
-   public function updateProfile(User $user ,Request $request)
-   {
-       
-       $input = $request->validate([
-           'type' => 'required|string|in:PJ,PF',
-           'address' => [
-               'nullable',
-               'string',
-               'max:255'
-           ],
-       ]);
-       
-       Profile::updateOrCreate(
-           ['user_id' => $user->id],
-           $input
-       );
+            $user->profile()->create([
+                'type' => 'user',
+                'description' => 'Usuario comum',
+            ]);
+        });
+        if (
+            $request->routeIs('admin.users.store')
+        ) {
+            return redirect()->route('admin.users.index')
+                ->with('success', 'Usuário cadastrado com sucesso!');
+        } {
+            return redirect()->route('admin.users.index')
+                ->with('success', 'Cadastro realizado, faça seu login');
 
-       return redirect()->route('admin.users.index')->with('success', 'Perfil atualizado com sucesso!');
-   }
+        }
+        return redirect()->route('login')
+            ->with('success', 'Cadastro realizado, faça login');
+    }
 
-   public function updateLanguages(User $user, Request $request)
-   {
-       $input = $request->validate([
-           'languages' => 'nullable|array',
-           'languages.*' => 'string|in:PHP,JavaScript,Python,Java,C#',
-       ]);
-;
+    public function forgotPassword()
+    {
+        return view('user.forgot-password');
+    }
 
-    //$user->languages()->createMany($input['languages']);
-    $user->languages()->createMany(array_map(fn($language) => ['language' => $language], $input['languages'] ?? []));
+    public function sendPasswordResetLink(Request $request)
+    {
+        $request->validate(['email' => 'required|email']);
 
-       return redirect()->route('admin.users.index')->with('success', 'Linguagens atualizadas com sucesso!');
-   }
+        $status = Password::sendResetLink($request->only('email'));
 
-   public function destroy($id)
-   {
-       $user = User::find($id);
-       $user->delete();
-       return redirect()->route('admin.users.index')->with('success', 'Usuário excluído com sucesso!');
-   }
+        return $status === Password::RESET_LINK_SENT
+            ? back()->with('status', __($status))
+            : back()->withErrors(['email' => __($status)])->withInput();
+    }
 
+    public function resetPassword(Request $request, string $token)
+    {
+        return view('user.reset-password', [
+            'token' => $token,
+            'email' => $request->query('email', ''),
+        ]);
+    }
 
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'token' => 'required',
+            'email' => 'required|email',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function (User $user, string $password) {
+                $user->forceFill([
+                    'password' => Hash::make($password),
+                    'remember_token' => Str::random(60),
+                ])->save();
+
+                event(new PasswordReset($user));
+            }
+        );
+
+        return $status === Password::PASSWORD_RESET
+            ? redirect()->route('users.password.form')->with('status', __($status))
+            : back()->withErrors(['email' => __($status)])->withInput($request->only('email'));
+    }
 }

@@ -1,89 +1,90 @@
-<!doctype html>
-<html lang="pt-BR">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Cadastro</title>
-    @vite('resources/scss/app.scss')
-</head>
-<body class="register-page bg-body-secondary">
-    <main class="register-box">
-        <div class="card">
-            <div class="card-body register-card-body">
-                <p class="register-box-msg">Preencha os campos para se cadastrar</p>
 
-                <form action="{{ route('users.store') }}" method="POST">
-                    @csrf
+@extends('layouts.default')
 
-                    <label class="visually-hidden" for="name">Nome</label>
-                    <div class="input-group mb-3">
-                        <input
-                            id="name"
-                            name="name"
-                            type="text"
-                            value="{{ old('name') }}"
-                            class="form-control @error('name') is-invalid @enderror"
-                            placeholder="Nome"
-                            autocomplete="name"
-                            required
-                        />
-                        <div class="input-group-text">
-                            <span class="bi bi-person"></span>
-                        </div>
-                        @error('name')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/register.css') }}">
+@endpush
 
-                    <label class="visually-hidden" for="email">Email</label>
-                    <div class="input-group mb-3">
-                        <input
-                            id="email"
-                            name="email"
-                            type="email"
-                            value="{{ old('email') }}"
-                            class="form-control @error('email') is-invalid @enderror"
-                            placeholder="Email"
-                            autocomplete="email"
-                            required
-                        />
-                        <div class="input-group-text">
-                            <span class="bi bi-envelope"></span>
-                        </div>
-                        @error('email')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
+@section('classe-body', 'register-page')
 
-                    <label class="visually-hidden" for="password">Senha</label>
-                    <div class="input-group mb-3">
-                        <input
-                            id="password"
-                            name="password"
-                            type="password"
-                            class="form-control @error('password') is-invalid @enderror"
-                            placeholder="Senha"
-                            autocomplete="new-password"
-                            required
-                        />
-                        <div class="input-group-text">
-                            <span class="bi bi-lock-fill"></span>
-                        </div>
-                        @error('password')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
+@section('content')
 
-                    <div class="d-grid">
-                        <button type="submit" class="btn btn-primary">Cadastrar</button>
-                    </div>
-                </form>
+<main class="register-box">
 
-                <p class="mt-3 mb-0 text-center">
-                    Já tem uma conta? <a href="{{ route('login') }}">Entrar</a>
-                </p>
+    <div class="register-card">
+
+        <h1 class="register-title">
+            {{ request()->routeIs('admin.users.create') ? 'Cadastrar usuário' : 'Criar conta' }}
+        </h1>
+
+        <p class="register-description">
+            Preencha os campos abaixo para realizar o cadastro.
+        </p>
+
+        @if ($errors->any())
+            <div class="register-error">
+                @foreach ($errors->all() as $error)
+                    <p>{{ $error }}</p>
+                @endforeach
             </div>
-        </div>
-    </main>
-</body>
-</html>
+        @endif
+
+        <form action="{{ request()->routeIs('admin.users.create') ? route('admin.users.store') : route('users.store') }}" method="POST">
+            @csrf
+
+            <label for="name">Nome completo</label>
+            <input
+                type="text"
+                id="name"
+                name="name"
+                placeholder="Digite seu nome completo"
+                value="{{ old('name') }}"
+                autocomplete="name"
+                required
+            >
+
+            <label for="email">E-mail</label>
+            <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="seu@email.com"
+                value="{{ old('email') }}"
+                autocomplete="email"
+                required
+            >
+
+            <label for="password">Senha</label>
+            <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Mínimo de 8 caracteres"
+                minlength="8"
+                autocomplete="new-password"
+                required
+            >
+
+            <button type="submit" class="register-submit">
+                {{ request()->routeIs('admin.users.create') ? 'Cadastrar usuário' : 'Criar conta' }}
+            </button>
+        </form>
+
+        @if (request()->routeIs('admin.users.create'))
+            <p class="register-login">
+                <a href="{{ route('admin.users.index') }}">
+                    Voltar ao painel administrativo
+                </a>
+            </p>
+        @else
+            <p class="register-login">
+                Já possui uma conta?
+                <a href="{{ route('login') }}">Entrar</a>
+            </p>
+        @endif
+
+    </div>
+
+</main>
+
+@endsection
