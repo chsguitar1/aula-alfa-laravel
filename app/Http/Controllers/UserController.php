@@ -40,11 +40,20 @@ class UserController extends Controller
         'name' => 'required|string|max:255',
         'email' => 'required|string|email|max:255|unique:users',
         'password' => 'required|string|min:8',
+    ], [
+        'name.required' => 'Informe o nome.',
+        'email.required' => 'Informe o email.',
+        'email.email' => 'Informe um email válido.',
+        'email.unique' => 'Este email já está cadastrado.',
+        'password.required' => 'Informe a senha.',
+        'password.min' => 'A senha deve ter no mínimo :min caracteres.',
     ]);
 
+    // Somente os campos validados são gravados: o cadastro nunca cria perfil "admin".
     User::create($input);
 
-    if ($request->user()?->profile?->type === 'admin') {
+    // Administrador incluindo usuário pelo painel volta para a lista administrativa.
+    if ($request->user()?->isAdmin()) {
         return redirect()->route('admin.users.index')->with('success', 'Usuário criado com sucesso!');
     }
 
