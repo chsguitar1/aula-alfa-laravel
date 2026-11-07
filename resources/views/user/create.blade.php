@@ -79,9 +79,15 @@
                     </div>
                 </form>
 
-                <p class="mt-3 mb-0 text-center">
-                    Já tem uma conta? <a href="{{ route('login') }}">Entrar</a>
-                </p>
+                @if (auth()->user()?->isAdmin())
+                    <p class="mt-3 mb-0 text-center">
+                        <a href="{{ route('admin.users.index') }}">Voltar para a lista de usuários</a>
+                    </p>
+                @else
+                    <p class="mt-3 mb-0 text-center">
+                        Já tem uma conta? <a href="{{ route('login') }}">Entrar</a>
+                    </p>
+                @endif
             </div>
         </div>
     </main>

@@ -7,6 +7,8 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -42,11 +44,21 @@ class User extends Authenticatable
         return self::all();
     }
 
-    public function profile(){
+    public function profile(): HasOne
+    {
       return $this->hasOne(Profile::class);
     }
-    
-    public function languages(){
+
+    public function languages(): HasMany
+    {
       return $this->hasMany(UserLanguages::class);
+    }
+
+    /**
+     * Autorização administrativa: depende do tipo do perfil, não apenas de estar logado.
+     */
+    public function isAdmin(): bool
+    {
+      return $this->profile?->type === Profile::TYPE_ADMIN;
     }
 }
