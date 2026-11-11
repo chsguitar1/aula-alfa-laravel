@@ -30,10 +30,10 @@ class User extends Authenticatable
         ];
     }
 
-    public function show_user()
+    public function show_user($id)
     {
 
-    return ['cristiano','framework laravel'];
+        return  User::find($id);
 
     }
 
@@ -44,5 +44,17 @@ class User extends Authenticatable
 
     public function profile(){
       return $this->hasOne(Profile::class);
+    }
+    
+    /**
+     * Só é admin quem tem um perfil (tabela profile) com type = admin.
+     */
+    public function isAdmin(): bool
+    {
+        return $this->profile?->type === 'admin';
+    }
+
+    public function languages(){
+      return $this->hasMany(UserLanguages::class);
     }
 }

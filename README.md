@@ -1,58 +1,128 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Autenticação e área administrativa
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Atividade prática de autenticação e área administrativa em Laravel, com login, logout, cadastro de usuários e middleware de administrador.
 
-## About Laravel
+## Como executar localmente
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+1. Instale as dependências PHP:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+   ```bash
+   composer install
+   ```
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+2. Copie o arquivo de ambiente de exemplo:
 
-## Learning Laravel
+   ```powershell
+   Copy-Item .env.example .env
+   ```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+3. Gere a chave da aplicação:
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+   ```bash
+   php artisan key:generate
+   ```
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+4. Execute as migrations e os seeders:
 
-## Agentic Development
+   ```bash
+   php artisan migrate --seed
+   ```
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+   O banco padrão definido em `.env.example` é SQLite (`DB_CONNECTION=sqlite`).
 
-```bash
-composer require laravel/boost --dev
+5. Instale as dependências do frontend:
 
-php artisan boost:install
-```
+   ```bash
+   npm install
+   ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+6. Em um terminal, inicie o Vite:
 
-## Contributing
+   ```bash
+   npm run dev
+   ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+7. Em outro terminal, inicie a aplicação:
 
-## Code of Conduct
+   ```bash
+   php artisan serve
+   ```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Contas de demonstração
 
-## Security Vulnerabilities
+O `AdminUserSeeder` cria, somente quando `APP_ENV=local`, a conta de administrador:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+- **E-mail:** `admin@example.test`
+- **Senha:** `senha-local-123`
 
-## License
+Essa conta existe apenas para desenvolvimento local. O cadastro público cria usuários comuns, sem perfil administrativo.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Rotas
+
+| Método | Caminho | Acesso | Descrição |
+|---|---|---|---|
+| GET | `/login` | Público | Exibe o formulário de login. |
+| POST | `/login` | Público | Realiza o login, protegido pelo limite `throttle:login`. |
+| GET | `/register` | Público | Exibe o formulário de cadastro. |
+| POST | `/store` | Público | Cria um usuário pelo cadastro. |
+| GET | `/` | Autenticado | Exibe a página inicial do usuário autenticado. |
+| POST | `/logout` | Autenticado | Encerra a sessão. |
+| GET | `/admin/users` | Administrador | Exibe a lista de usuários. |
+| GET | `/admin/user/create` | Administrador | Exibe o formulário de criação de usuário no painel. |
+| GET | `/admin/user/{user}` | Administrador | Exibe os dados de um usuário. |
+| GET | `/admin/user/{user}/edit` | Administrador | Exibe o formulário de edição de usuário. |
+| PUT | `/admin/user/{user}` | Administrador | Atualiza os dados de um usuário. |
+| PUT | `/admin/user/{user}/profile` | Administrador | Atualiza o perfil de um usuário. |
+| DELETE | `/admin/user/{user}` | Administrador | Exclui um usuário. |
+
+Todas as rotas com prefixo `/admin` estão protegidas pelo middleware `admin`.
+
+## Como funciona
+
+- A autenticação usa sessão. O login valida e-mail e senha, autentica o usuário e regenera o identificador da sessão.
+- O middleware `EnsureAdmin` redireciona visitantes para `/login`. Usuários autenticados sem perfil administrativo recebem resposta `403`. O acesso é liberado quando o perfil possui `type = admin`.
+- Depois do login, usuários comuns são redirecionados para `/`. Administradores são redirecionados para `/admin/users`, respeitando um destino interno solicitado anteriormente quando aplicável.
+- O logout é feito por `POST` em `/logout`, invalida a sessão, regenera o token CSRF e redireciona para `/login`.
+- A rota `POST /login` usa `throttle:login`:
+  - no máximo **5 tentativas por minuto** para a mesma combinação de e-mail e endereço IP;
+  - no máximo **20 tentativas por minuto** para o mesmo endereço IP, mesmo usando e-mails diferentes.
+
+  Ao exceder qualquer limite, a requisição retorna ao formulário de login, mantém o e-mail informado e exibe uma mensagem indicando que é necessário tentar novamente após o número de segundos informado.
+
+## Evidências
+
+### Visitante tentando acessar área protegida é redirecionado ao login
+
+![Visitante redirecionado ao login](docs/images/redirecionarLogin.png)
+
+Comprova que um visitante que tenta acessar uma área protegida é redirecionado para a tela de login.
+
+### Cadastro de conta comum realizado com sucesso
+
+![Cadastro realizado com sucesso](docs/images/cadastrado_com_sucesso.png)
+
+Comprova que o cadastro público de uma conta comum foi concluído com sucesso.
+
+### Validação de dados inválidos no formulário
+
+![Validação de dados inválidos](docs/images/dadosInvalidos.png)
+
+Comprova a apresentação de validações quando os dados informados no formulário são inválidos.
+
+### Página inicial do usuário comum autenticado
+
+![Painel do usuário comum](docs/images/painelUsuarioComum.png)
+
+Comprova o acesso do usuário comum autenticado à página inicial.
+
+### Usuário comum tentando acessar a área administrativa (403)
+
+![Acesso administrativo negado](docs/images/validacao_admin.png)
+
+Comprova que um usuário comum autenticado recebe `403` ao tentar acessar a área administrativa.
+
+### Painel administrativo acessado pelo administrador
+
+![Painel administrativo](docs/images/painelAdmin.png)
+
+Comprova que o administrador consegue acessar o painel administrativo.
