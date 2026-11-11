@@ -2,23 +2,41 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password'])]
-#[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
     /**
-     * Get the attributes that should be cast.
+     * Atributos atribuíveis em massa.
+     *
+     * @var list<string>
+     */
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'address',
+    ];
+
+    /**
+     * Atributos ocultos para serialização.
+     *
+     * @var list<string>
+     */
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    /**
+     * Casts de atributos.
      *
      * @return array<string, string>
      */
@@ -30,23 +48,19 @@ class User extends Authenticatable
         ];
     }
 
-    public function show_user($id)
+    /**
+     * Relação 1:1 entre User e Profile.
+     */
+    public function profile(): HasOne
     {
-
-        return  User::find($id);
-
+        return $this->hasOne(Profile::class, 'user_id', 'id');
     }
 
-    public function getAll()
+    /**
+     * Verifica se o usuário possui perfil administrativo.
+     */
+    public function isAdmin(): bool
     {
-        return self::all();
-    }
-
-    public function profile(){
-      return $this->hasOne(Profile::class);
-    }
-    
-    public function languages(){
-      return $this->hasMany(UserLanguages::class);
+        return $this->profile?->type === 'admin';
     }
 }
