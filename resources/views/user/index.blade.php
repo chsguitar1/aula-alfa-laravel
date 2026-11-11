@@ -1,37 +1,39 @@
 @extends('layouts.default')
-@section('classe-body', 'register-page', 'register-page bg-body-secondary')
+
+@section('title', 'Listar Usuários | Rede Patas')
+
 @section('content')
-  
-    <table class="table table-bordered" role="table">
+<div class="mt-2">
+    <table class="table table-dark table-bordered align-middle">
         <thead>
             <tr>
-                <th style="width: 10px" scope="col">#</th>
-                <th scope="col">Nome</th>
-                <th scope="col">Email</th>
-                <th scope="col">Ações</th>
-            
+                <th style="width: 50px;">#</th>
+                <th>Nome</th>
+                <th>Email</th>
+                <th style="width: 220px;">Ações</th>
             </tr>
         </thead>
         <tbody>
-            @foreach ($users as $user)
-            
-            <tr class="align-middle">
-                <td>
-                    {{ $user->id }}.</td>
-                <td>{{ $user->name }}</td>
-                <td>{{ $user->email }}</td>
-                <td>
-                    <a href="{{ route('admin.user.edit', $user->id) }}" class="btn btn-primary btn-sm">Editar</a>
-                    {{-- <form action="{{ route('admin.user.destroy', $user->id) }} " method="POST" style="display:inline;">
-                        @csrf
-                        @method('DELETE') --}}
-                        <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
-                    {{-- </form> --}}
-                </td>
-            </tr>
-            @endforeach
-                
+            @forelse ($users as $user)
+                <tr>
+                    <td>{{ $user->id }}.</td>
+                    <td>{{ $user->name }}</td>
+                    <td>{{ $user->email }}</td>
+                    <td>
+                        <a href="{{ route('users.edit', $user->id) }}" class="btn btn-primary btn-sm me-1">Editar</a>
+                        <form action="{{ route('users.destroy', $user->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Deseja realmente excluir este usuário?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
+                        </form>
+                    </td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="4" class="text-center">Nenhum usuário encontrado.</td>
+                </tr>
+            @endforelse
         </tbody>
     </table>
-     {{ $users->links('pagination::bootstrap-5') }}
+</div>
 @endsection

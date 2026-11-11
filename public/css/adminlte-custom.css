@@ -1,0 +1,104 @@
+/* Bootstrap 5 & AdminLTE 4 Complete Layout Fallback + Custom Styles */
+*, *::before, *::after { box-sizing: border-box; }
+body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+.login-page, .register-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #e9ecef !important;
+    color: #212529 !important;
+}
+.login-box, .register-box {
+    width: 360px;
+    max-width: 92vw;
+}
+.login-box .card, .register-box .card {
+    background: #ffffff;
+    border: 1px solid rgba(0,0,0,0.125);
+    border-radius: 0.375rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
+}
+.login-card-body, .register-card-body {
+    padding: 1.5rem;
+    color: #212529;
+}
+.login-box-msg, .register-box-msg {
+    margin: 0 0 1rem 0;
+    text-align: center;
+    font-size: 0.95rem;
+    color: #495057;
+}
+.app-wrapper {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+    flex-direction: row;
+}
+.app-sidebar {
+    width: 250px;
+    min-height: 100vh;
+    background-color: #343a40;
+    color: #c2c7d0;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #4b545c;
+}
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid #4b545c;
+    color: #fff;
+    text-decoration: none;
+    font-size: 1.15rem;
+}
+.sidebar-brand img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+}
+.sidebar-wrapper {
+    padding: 0.75rem;
+    flex: 1;
+}
+.app-content-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    background-color: #212529;
+    color: #dee2e6;
+}
+.app-header {
+    background-color: #2b3035 !important;
+    border-bottom: 1px solid #495057;
+    padding: 0.5rem 1rem;
+}
+.app-main {
+    flex: 1;
+    padding: 1rem 1.25rem;
+}
+.app-footer {
+    padding: 0.85rem 1.25rem;
+    background-color: #2b3035;
+    border-top: 1px solid #495057;
+    font-size: 0.875rem;
+    color: #adb5bd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.user-image {
+    width: 28px;
+    height: 28px;
+    object-fit: cover;
+    margin-right: 0.4rem;
+}

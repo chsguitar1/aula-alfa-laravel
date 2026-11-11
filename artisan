@@ -7,7 +7,33 @@ use Symfony\Component\Console\Input\ArgvInput;
 define('LARAVEL_START', microtime(true));
 
 // Register the Composer autoloader...
-require __DIR__.'/vendor/autoload.php';
+if (file_exists(__DIR__.'/vendor/autoload.php')) {
+    require __DIR__.'/vendor/autoload.php';
+} else {
+    $fallbackPaths = [
+        dirname(__DIR__).'/trabalho2/vendor/autoload.php',
+        'C:/Users/thiago/Herd/trabalho2/vendor/autoload.php',
+        'C:/Users/thiago/Desktop/trabalho2/vendor/autoload.php',
+    ];
+    $loaded = false;
+    foreach ($fallbackPaths as $path) {
+        if (file_exists($path)) {
+            $loader = require $path;
+            if (is_object($loader) && method_exists($loader, 'setPsr4')) {
+                $loader->setPsr4('App\\', [__DIR__.'/app']);
+                $loader->setPsr4('Database\\Factories\\', [__DIR__.'/database/factories']);
+                $loader->setPsr4('Database\\Seeders\\', [__DIR__.'/database/seeders']);
+            }
+            $loaded = true;
+            break;
+        }
+    }
+    if (! $loaded) {
+        echo "Instalando dependencias do Composer automaticamente...\n";
+        passthru('composer install --no-interaction');
+        require __DIR__.'/vendor/autoload.php';
+    }
+}
 
 // Bootstrap Laravel and handle the command...
 /** @var Application $app */
