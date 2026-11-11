@@ -42,8 +42,11 @@ class UserController extends Controller
         'password' => 'required|string|min:8',
     ]);
 
+    // Só os campos validados são usados: type não é lido e nenhum perfil é criado.
+    // Sem perfil, o usuário é comum.
     User::create($input);
 
+    // Admin logado volta para a listagem; visitante vai para o login.
     if ($request->user()?->profile?->type === 'admin') {
         return redirect()->route('admin.users.index')->with('success', 'Usuário criado com sucesso!');
     }

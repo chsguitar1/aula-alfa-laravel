@@ -135,12 +135,9 @@
       src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
       crossorigin="anonymous"
     ></script>
-    <!--end::Required Plugin(popperjs for Bootstrap 5)--><!--begin::Required Plugin(Bootstrap 5)-->
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js"
-      crossorigin="anonymous"
-    ></script>
-    <!--end::Required Plugin(Bootstrap 5)--><!--begin::Required Plugin(AdminLTE)-->
+    <!--end::Required Plugin(popperjs for Bootstrap 5)-->
+    {{-- Bootstrap já vem pelo app.js (Vite); carregar de novo pelo CDN duplicava os eventos e o dropdown abria e fechava. --}}
+    <!--begin::Required Plugin(AdminLTE)-->
     <script src="./js/adminlte.js"></script>
     <!--end::Required Plugin(AdminLTE)-->
     <!--begin::OverlayScrollbars Configure-->

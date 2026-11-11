@@ -1,7 +1,13 @@
 @extends('layouts.default')
 @section('classe-body', 'register-page', 'register-page bg-body-secondary')
 @section('content')
-  
+
+    @if (session('success'))
+        <div class="alert alert-success" role="alert">
+            {{ session('success') }}
+        </div>
+    @endif
+
     <table class="table table-bordered" role="table">
         <thead>
             <tr>

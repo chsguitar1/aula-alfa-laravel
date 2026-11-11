@@ -1,16 +1,17 @@
 version: '3.8'
 services:
   db:
-    image: mysql/mysql-server:latest
+    image: mysql:8.0
     container_name: my-mysql
     restart: always
     environment:
-      - MYSQL_DATABASE=mysqlDB
-      - MYSQL_ROOT_PASSWORD=mysqlPW
+      - MYSQL_DATABASE=trabalho-laravel
+      - MYSQL_ROOT_PASSWORD=root
     ports:
       - '3306:3306'
     volumes:
-      - mysql-volume:/var/lib/mysql
+      - database:/var/lib/mysql
+
 volumes:
-  mysql-volume:
+  database:
     driver: local
