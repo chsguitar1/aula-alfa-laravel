@@ -5,13 +5,15 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
-    public function index(){
+    public function index()
+    {
         $users = User::paginate(5);
 
-        return view('user.index',[
+        return view('admin.users.index', [
             'users' => $users,
             'title' => 'Lista de usuario do Sistema'
         ]);
@@ -40,8 +42,17 @@ class UserController extends Controller
             'password' => 'required|string|min:8',
         ]);
 
+        // Criptografa a senha antes de salvar no banco
+        $input['password'] = Hash::make($input['password']);
+
         User::create($input);
-        return redirect()->route('admin.users.index');
+
+        // Se quem cadastrou foi um admin logado pelo painel, volta para a lista. Senão, vai para o login[cite: 7]
+        if (Auth::check() && Auth::user()->isAdmin()) {
+            return redirect()->route('admin.users.index')->with('success', 'Usuário criado com sucesso!');
+        }
+
+        return redirect()->route('login')->with('success', 'Conta criada com sucesso! Faça o login.');
     }
 
     public function forgotPassword()
