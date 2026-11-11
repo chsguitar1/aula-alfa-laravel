@@ -21,7 +21,7 @@
                 <td>{{ $user->name }}</td>
                 <td>{{ $user->email }}</td>
                 <td>
-                    <a href="{{ route('admin.user.edit', $user->id) }}" class="btn btn-primary btn-sm">Editar</a>
+                    <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-primary btn-sm">Editar</a>
                     {{-- <form action="{{ route('admin.user.destroy', $user->id) }} " method="POST" style="display:inline;">
                         @csrf
                         @method('DELETE') --}}

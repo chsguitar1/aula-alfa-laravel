@@ -42,15 +42,20 @@ class UserController extends Controller
         'password' => 'required|string|min:8',
     ]);
 
+    // Garante que a senha seja criptografada antes de salvar no banco
+    $input['password'] = bcrypt($input['password']);
+
     User::create($input);
 
+    // Se quem criou foi um admin logado, volta para a lista do painel
     if ($request->user()?->profile?->type === 'admin') {
         return redirect()->route('admin.users.index')->with('success', 'Usuário criado com sucesso!');
     }
 
     return redirect()->route('login')->with('success', 'Cadastro realizado com sucesso. Faça login para continuar.');
-
+    
    }
+
 
 
    public function edit($id)

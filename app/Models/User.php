@@ -42,9 +42,16 @@ class User extends Authenticatable
         return self::all();
     }
 
-    public function profile(){
-      return $this->hasOne(Profile::class);
-    }
+   public function profile()
+{
+    return $this->hasOne(Profile::class); // ou belongsTo, dependendo da sua migration
+}
+
+public function isAdmin()
+{
+    // Verifica se o relacionamento existe e se o tipo é admin
+    return $this->profile && $this->profile->type === 'admin';
+}
     
     public function languages(){
       return $this->hasMany(UserLanguages::class);
