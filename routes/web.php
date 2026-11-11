@@ -3,11 +3,15 @@
 use Illuminate\Support\Facades\Route;
 use App\Models\User;
 use App\Http\Controllers\UserController;
+use App\Http\Middleware\EnsureAdmin;
 
 Route::get('/', function () {
     return view('welcome');
-})->middleware('autenyticado');
+});
 
+Route::view('/login', 'auth.login')->name('login');
+
+Route::view('/forgot-password', 'auth.forgot-password')->name('password.request');
 
 Route::get('register', [UserController::class, 'register'])->name('register');
 
