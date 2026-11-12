@@ -141,7 +141,8 @@
                                 <span class="direct-chat-timestamp float-end"> 23 Jan 2:00 pm </span>
                             </div>
                             <!-- /.direct-chat-infos -->
-                            <img class="direct-chat-img" src="./assets/img/user1-128x128.jpg" alt="message user image" />
+                            <span class="direct-chat-img bg-primary text-white d-flex align-items-center justify-content-center"
+                                aria-label="Alexander Pierce">AP</span>
                             <!-- /.direct-chat-img -->
                             <div class="direct-chat-text">
                                 Is this template really for free? That's unbelievable!
@@ -157,7 +158,8 @@
                                 <span class="direct-chat-timestamp float-start"> 23 Jan 2:05 pm </span>
                             </div>
                             <!-- /.direct-chat-infos -->
-                            <img class="direct-chat-img" src="./assets/img/user3-128x128.jpg" alt="message user image" />
+                            <span class="direct-chat-img bg-secondary text-white d-flex align-items-center justify-content-center"
+                                aria-label="Sarah Bullock">SB</span>
                             <!-- /.direct-chat-img -->
                             <div class="direct-chat-text">You better believe it!</div>
                             <!-- /.direct-chat-text -->
@@ -171,7 +173,8 @@
                                 <span class="direct-chat-timestamp float-end"> 23 Jan 5:37 pm </span>
                             </div>
                             <!-- /.direct-chat-infos -->
-                            <img class="direct-chat-img" src="./assets/img/user1-128x128.jpg" alt="message user image" />
+                            <span class="direct-chat-img bg-primary text-white d-flex align-items-center justify-content-center"
+                                aria-label="Alexander Pierce">AP</span>
                             <!-- /.direct-chat-img -->
                             <div class="direct-chat-text">
                                 Working with AdminLTE on a great new app! Wanna join?
@@ -187,7 +190,8 @@
                                 <span class="direct-chat-timestamp float-start"> 23 Jan 6:10 pm </span>
                             </div>
                             <!-- /.direct-chat-infos -->
-                            <img class="direct-chat-img" src="./assets/img/user3-128x128.jpg" alt="message user image" />
+                            <span class="direct-chat-img bg-secondary text-white d-flex align-items-center justify-content-center"
+                                aria-label="Sarah Bullock">SB</span>
                             <!-- /.direct-chat-img -->
                             <div class="direct-chat-text">I would love to.</div>
                             <!-- /.direct-chat-text -->
@@ -201,8 +205,8 @@
                         <ul class="contacts-list">
                             <li>
                                 <a href="#">
-                                    <img class="contacts-list-img" src="./assets/img/user1-128x128.jpg"
-                                        alt="User Avatar" />
+                                    <span class="contacts-list-img bg-primary text-white d-flex align-items-center justify-content-center"
+                                        aria-label="Count Dracula">CD</span>
 
                                     <div class="contacts-list-info">
                                         <span class="contacts-list-name">
@@ -217,8 +221,8 @@
                             <!-- End Contact Item -->
                             <li>
                                 <a href="#">
-                                    <img class="contacts-list-img" src="./assets/img/user7-128x128.jpg"
-                                        alt="User Avatar" />
+                                    <span class="contacts-list-img bg-success text-white d-flex align-items-center justify-content-center"
+                                        aria-label="Sarah Doe">SD</span>
 
                                     <div class="contacts-list-info">
                                         <span class="contacts-list-name">
@@ -233,8 +237,8 @@
                             <!-- End Contact Item -->
                             <li>
                                 <a href="#">
-                                    <img class="contacts-list-img" src="./assets/img/user3-128x128.jpg"
-                                        alt="User Avatar" />
+                                    <span class="contacts-list-img bg-secondary text-white d-flex align-items-center justify-content-center"
+                                        aria-label="Nadia Jolie">NJ</span>
 
                                     <div class="contacts-list-info">
                                         <span class="contacts-list-name">
@@ -249,8 +253,8 @@
                             <!-- End Contact Item -->
                             <li>
                                 <a href="#">
-                                    <img class="contacts-list-img" src="./assets/img/user5-128x128.jpg"
-                                        alt="User Avatar" />
+                                    <span class="contacts-list-img bg-warning text-dark d-flex align-items-center justify-content-center"
+                                        aria-label="Nora S. Vans">NV</span>
 
                                     <div class="contacts-list-info">
                                         <span class="contacts-list-name">
@@ -265,8 +269,8 @@
                             <!-- End Contact Item -->
                             <li>
                                 <a href="#">
-                                    <img class="contacts-list-img" src="./assets/img/user6-128x128.jpg"
-                                        alt="User Avatar" />
+                                    <span class="contacts-list-img bg-info text-dark d-flex align-items-center justify-content-center"
+                                        aria-label="John K.">JK</span>
 
                                     <div class="contacts-list-info">
                                         <span class="contacts-list-name">
@@ -281,8 +285,8 @@
                             <!-- End Contact Item -->
                             <li>
                                 <a href="#">
-                                    <img class="contacts-list-img" src="./assets/img/user8-128x128.jpg"
-                                        alt="User Avatar" />
+                                    <span class="contacts-list-img bg-danger text-white d-flex align-items-center justify-content-center"
+                                        aria-label="Kenneth M.">KM</span>
 
                                     <div class="contacts-list-info">
                                         <span class="contacts-list-name">

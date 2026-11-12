@@ -33,7 +33,7 @@ class User extends Authenticatable
     public function show_user($id)
     {
 
-        return  User::find($id);
+        return User::find($id);
 
     }
 
@@ -42,11 +42,13 @@ class User extends Authenticatable
         return self::all();
     }
 
-    public function profile(){
-      return $this->hasOne(Profile::class);
+    public function profile()
+    {
+        return $this->hasOne(Profile::class);
     }
-    
-    public function languages(){
-      return $this->hasMany(UserLanguages::class);
+
+    public function languages()
+    {
+        return $this->hasMany(UserLanguages::class);
     }
 }

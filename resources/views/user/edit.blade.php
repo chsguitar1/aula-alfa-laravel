@@ -70,7 +70,7 @@
                     <div class="card-body">
                         <label for="type">Tipo de pessoa</label>
                         <select name="type" class="form-control @error('type') is-invalid @enderror">
-                            @foreach (['PJ', 'PF'] as $type)
+                            @foreach (['PJ', 'PF', 'admin'] as $type)
                                 <option value="{{ $type }}" @selected((old('type') ?? $user->profile?->type) == $type)>
                                     {{ $type }}
                                 </option>
@@ -128,12 +128,8 @@
                     <div class="card-body">
                         @foreach (['PHP', 'JavaScript', 'Python', 'Java', 'C#'] as $language)
                             <div class="form-check mb-3">
-                                {{-- <input class="form-check-input  @error('languages') is-invalid @enderror" type="checkbox"
-                                    id="check-{{ $language }}" name="languages[][language]"
-                                    value="{{ $language }}" @if ($user->languages->contains('language', $language)) checked @endif> --}}
-
-                                    <input class="form-check-input  @error('languages') is-invalid @enderror" type="checkbox"
-                                    id="check-{{ $language }}" name="languages[][language]"
+                                <input class="form-check-input @error('languages') is-invalid @enderror" type="checkbox"
+                                    id="check-{{ $language }}" name="languages[]"
                                     value="{{ $language }}" @checked(in_array($language, $user->languages->pluck('language')->toArray()))>
                                 <label class="form-check-label"
                                     for="check-{{ $language }}">{{ $language }}</label>
