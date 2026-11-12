@@ -26,12 +26,7 @@ Limitações: o contador fica no cache (se o cache é limpo, zera); atacante que
 
 ## Como demonstrar localmente
 
-```bash
-composer install && cp .env.example .env   # se ainda não tiver .env
-php artisan key:generate
-php artisan migrate:fresh --seed            # APP_ENV=local cria o admin
-npm install && npm run dev
-```
+Para configurar o projeto no Windows com SQLite, siga o passo a passo do [README](../README.md). Ele inclui a criação do `.env` e do arquivo de banco, as migrations e o build dos assets. Com `APP_ENV=local`, o seeder cria o administrador de demonstração.
 
 Admin de demonstração (somente local): `admin@example.com` / `senha-local-123`
 (pode trocar com `ADMIN_SEED_EMAIL` e `ADMIN_SEED_PASSWORD` no `.env`).

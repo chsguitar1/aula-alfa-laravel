@@ -1,58 +1,90 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Autenticação e área administrativa
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Trabalho da disciplina de Framework com Laravel. A aplicação permite cadastro e login com sessão e restringe a área administrativa aos usuários com perfil `admin`.
 
-## About Laravel
+## Integrantes
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- James Soares Silva
+- Giovanni Bernardi
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Requisitos
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- PHP 8.4.1 ou superior, com as extensões exigidas pelo Composer, incluindo PDO SQLite.
+- Composer e Git.
+- Node.js 20.19+ ou 22.12+ e npm.
 
-## Learning Laravel
+As dependências do `composer.lock` exigem PHP 8.4.1, embora o `composer.json` declare PHP 8.3. O projeto usa SQLite nas instruções abaixo; não é necessário iniciar o MySQL.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Como executar no Windows
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+No PowerShell, ative o PHP portátil, se necessário, ajustando o caminho para a pasta onde está `php.exe`:
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
-```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+```powershell
+$env:Path = "C:\caminho\para\php;$env:Path"
+php -v
+composer --version
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Clone esta branch e entre na pasta, caso ainda não tenha feito isso:
 
-## Contributing
+```powershell
+git clone --branch trabalho-auth --single-branch https://github.com/jamesoaress/aula-alfa-laravel.git
+cd aula-alfa-laravel
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Na pasta do projeto, execute:
 
-## Code of Conduct
+```powershell
+composer install
+Copy-Item .env.example .env
+php artisan key:generate
+New-Item -ItemType File -Path database/database.sqlite
+php artisan migrate --seed
+npm.cmd install --package-lock=false
+npm.cmd run build
+php artisan serve --host=127.0.0.1 --port=8000
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Abra <http://127.0.0.1:8000/login>. O comando `Copy-Item` e a criação do arquivo SQLite são necessários na primeira configuração; se já existirem, preserve o `.env` e o banco. `migrate --seed` cria as tabelas e os usuários de demonstração. Evite `migrate:fresh` em um banco com dados que deseja manter, pois ele apaga as tabelas.
 
-## Security Vulnerabilities
+O `package-lock.json` atual está inconsistente com o `package.json`: por isso as instruções usam `npm install --package-lock=false`. A instalação pode selecionar versões compatíveis mais recentes; atualizar e versionar o lockfile é necessário para instalações reproduzíveis com `npm ci`.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Para desenvolvimento visual, execute `npm.cmd run dev` em outro terminal. Execute `php artisan test --compact` para rodar os testes.
 
-## License
+## Como funciona
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- `/register` cria uma conta comum com nome, email único e senha de pelo menos oito caracteres. Após o cadastro, o visitante retorna ao login.
+- `/login` recebe email e senha por POST com CSRF. Uma falha apresenta mensagem genérica e preserva apenas o email.
+- Após o login, a sessão é regenerada. Usuários comuns vão para `/`; administradores vão para `/admin/users` ou para o destino interno solicitado anteriormente.
+- As rotas em `/admin/*` passam por middleware: visitantes são redirecionados ao login, usuários comuns recebem HTTP 403 e usuários com `profile.type = admin` têm acesso.
+- O botão **Sair** envia POST com CSRF. O logout invalida a sessão e renova o token CSRF.
+- O login limita cinco tentativas malsucedidas por combinação de email e IP em uma janela de 60 segundos. O contador é limpo após o sucesso. O limite dificulta ataques de força bruta, mas pode ser contornado com vários IPs ou emails e não substitui outras medidas de segurança.
+- O painel permite listar, editar e excluir usuários, atualizar perfis e registrar linguagens. O perfil de um administrador mantém sua permissão administrativa durante a edição.
+
+## Administrador local e demonstração
+
+Com `APP_ENV=local`, o seeder cria o seguinte usuário de exemplo:
+
+- Email: `admin@example.com`
+- Senha: `senha-local-123`
+
+Esses dados são somente para demonstração local. Os valores podem ser alterados no `.env` antes de executar o seeder. O cadastro público não concede perfil administrativo.
+
+Roteiro para apresentação e capturas de tela:
+
+1. Sem login, abra `/` e `/admin/users`: ambas redirecionam para `/login`.
+2. Abra `/register`, cadastre uma conta comum e confira a confirmação no login.
+3. Entre com a conta comum, faça logout pelo botão **Sair** e entre novamente.
+4. Com a conta comum, abra `/admin/users` e confira a resposta 403.
+5. Faça logout, entre com o administrador local e acesse `/admin/users`.
+
+## Estrutura principal
+
+- `routes/web.php`: rotas públicas, autenticadas e administrativas.
+- `app/Http/Controllers/AuthController.php`: login, limite de tentativas e logout.
+- `app/Http/Middleware/EnsureAdmin.php`: autorização administrativa.
+- `app/Http/Controllers/UserController.php`: cadastro e operações de usuários.
+- `database/migrations` e `database/seeders`: schema e dados de demonstração.
+- `tests/Feature/AuthAdminTest.php`: testes dos fluxos e permissões.
+
+Mais detalhes e respostas às perguntas da atividade estão em [docs/atividade-autenticacao.md](docs/atividade-autenticacao.md).

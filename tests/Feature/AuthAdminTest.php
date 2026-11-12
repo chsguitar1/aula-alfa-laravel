@@ -128,3 +128,59 @@ it('keeps a logout form with CSRF in the header', function () {
         ->assertSee('name="_token"', false)
         ->assertSee('Sair');
 });
+
+it('shows the confirmation when an admin registers a user', function () {
+    $this->actingAs(adminUser())->post('/store', [
+        'name' => 'Pessoa Exemplo',
+        'email' => 'pessoa@example.com',
+        'password' => 'senha-segura-1',
+    ])->assertRedirect(route('admin.users.index'));
+
+    $this->get('/admin/users')->assertSee('Usuário criado com sucesso!');
+});
+
+it('keeps admin permissions when updating the admin profile', function () {
+    $admin = adminUser();
+
+    $this->actingAs($admin)->put('/admin/user/'.$admin->id.'/profile', [
+        'type' => 'admin',
+        'address' => 'Novo endereço',
+    ])->assertRedirect(route('admin.users.index'));
+
+    expect($admin->fresh()->isAdmin())->toBeTrue();
+    expect($admin->fresh()->profile->address)->toBe('Novo endereço');
+
+    $this->put('/admin/user/'.$admin->id.'/profile', [
+        'type' => 'PF',
+        'address' => 'Outro endereço',
+    ])->assertSessionHasErrors('type');
+    expect($admin->fresh()->isAdmin())->toBeTrue();
+});
+
+it('updates and removes a user language selection', function () {
+    $admin = adminUser();
+    $user = User::factory()->create();
+    $user->languages()->create(['language' => 'Java']);
+
+    $this->actingAs($admin)->put('/admin/user/'.$user->id.'/languages', [
+        'languages' => ['PHP', 'Python'],
+    ])->assertRedirect(route('admin.users.index'));
+
+    expect($user->fresh()->languages->pluck('language')->sort()->values()->all())->toBe(['PHP', 'Python']);
+
+    $this->put('/admin/user/'.$user->id.'/languages', [])
+        ->assertRedirect(route('admin.users.index'));
+    expect($user->fresh()->languages)->toHaveCount(0);
+});
+
+it('provides a delete form and deletes a selected user', function () {
+    $admin = adminUser();
+    $user = User::factory()->create();
+
+    $this->actingAs($admin)->get('/admin/users')
+        ->assertSee('action="'.route('admin.user.destroy', $user->id).'"', false)
+        ->assertSee('name="_method" value="DELETE"', false);
+
+    $this->delete('/admin/user/'.$user->id)->assertRedirect(route('admin.users.index'));
+    $this->assertModelMissing($user);
+});
