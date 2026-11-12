@@ -68,6 +68,10 @@
                         Perfil
                     </div>
                     <div class="card-body">
+                        @if ($user->isAdmin())
+                            <p>Perfil administrativo. O tipo de pessoa não altera a permissão de administrador.</p>
+                            <input type="hidden" name="type" value="admin">
+                        @else
                         <label for="type">Tipo de pessoa</label>
                         <select name="type" class="form-control @error('type') is-invalid @enderror">
                             @foreach (['PJ', 'PF'] as $type)
@@ -76,6 +80,7 @@
                                 </option>
                             @endforeach
                         </select>
+                        @endif
                         <div class="invalid-feedback">
                             @error('type')
                                 {{ $message }}
@@ -133,7 +138,7 @@
                                     value="{{ $language }}" @if ($user->languages->contains('language', $language)) checked @endif> --}}
 
                                     <input class="form-check-input  @error('languages') is-invalid @enderror" type="checkbox"
-                                    id="check-{{ $language }}" name="languages[][language]"
+                                    id="check-{{ $language }}" name="languages[]"
                                     value="{{ $language }}" @checked(in_array($language, $user->languages->pluck('language')->toArray()))>
                                 <label class="form-check-label"
                                     for="check-{{ $language }}">{{ $language }}</label>

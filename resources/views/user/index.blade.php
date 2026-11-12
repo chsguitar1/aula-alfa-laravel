@@ -1,7 +1,9 @@
 @extends('layouts.default')
 @section('classe-body', 'register-page', 'register-page bg-body-secondary')
 @section('content')
-  
+    @if (session('success'))
+        <div class="alert alert-success" role="alert">{{ session('success') }}</div>
+    @endif
     <table class="table table-bordered" role="table">
         <thead>
             <tr>
@@ -22,11 +24,11 @@
                 <td>{{ $user->email }}</td>
                 <td>
                     <a href="{{ route('admin.user.edit', $user->id) }}" class="btn btn-primary btn-sm">Editar</a>
-                    {{-- <form action="{{ route('admin.user.destroy', $user->id) }} " method="POST" style="display:inline;">
+                    <form action="{{ route('admin.user.destroy', $user->id) }}" method="POST" style="display:inline;">
                         @csrf
-                        @method('DELETE') --}}
+                        @method('DELETE')
                         <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
-                    {{-- </form> --}}
+                    </form>
                 </td>
             </tr>
             @endforeach
