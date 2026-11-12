@@ -37,26 +37,31 @@ class UserController extends Controller
    public function store(Request $request)
    {
     $input = $request->validate([
-        'name' => 'required|string|max:255',
-        'email' => 'required|string|email|max:255|unique:users',
-        'password' => 'required|string|min:8',
+        'name' => ['required', 'string', 'max:255'],
+        'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+        'password' => ['required', 'string', 'min:8'],
     ]);
 
-    User::create($input);
+    $user = User::create($input);
+
+    // Todo cadastro público cria somente perfil comum; nunca aceita type enviado pelo navegador.
+    Profile::create([
+        'user_id' => $user->id,
+        'type' => 'user',
+        'description' => '',
+    ]);
 
     if ($request->user()?->profile?->type === 'admin') {
         return redirect()->route('admin.users.index')->with('success', 'Usuário criado com sucesso!');
     }
 
     return redirect()->route('login')->with('success', 'Cadastro realizado com sucesso. Faça login para continuar.');
-
    }
-
 
    public function edit($id)
    {
        $user = User::find($id);
-       $user->load('profile','languages');
+       $user->load('profile');
        return view('user.edit', [
            'user' => $user
        ]);

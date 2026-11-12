@@ -8,9 +8,10 @@ class Profile extends Model
 {
     protected $table = 'profile';
 
-    protected $fillable = [
-        'type',
-        'address',
-        'user_id'
-    ];
+    protected $fillable = ['type', 'address', 'description', 'user_id'];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
