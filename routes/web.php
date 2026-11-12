@@ -18,3 +18,6 @@ Route::prefix('admin')->middleware(EnsureAdmin::class)->group(function () {
     Route::get('/users', [UserController::class, 'index'])->name('admin.users.index');
    
 });
+
+Route::get('forgot-password', [UserController::class, 'forgotPassword'])->name('password.request');
+Route::post('forgot-password', [UserController::class, 'updatePassword'])->name('password.update');
