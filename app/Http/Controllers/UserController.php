@@ -42,9 +42,10 @@ class UserController extends Controller
         'password' => 'required|string|min:8',
     ]);
 
+    // Fillable de User só aceita name/email/password: o cadastro nunca cria perfil admin.
     User::create($input);
 
-    if ($request->user()?->profile?->type === 'admin') {
+    if ($request->user()?->isAdmin()) {
         return redirect()->route('admin.users.index')->with('success', 'Usuário criado com sucesso!');
     }
 

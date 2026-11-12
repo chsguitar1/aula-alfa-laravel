@@ -45,6 +45,12 @@ class User extends Authenticatable
     public function profile(){
       return $this->hasOne(Profile::class);
     }
+
+    /** Autorização: somente perfil com type = admin acessa o painel. */
+    public function isAdmin(): bool
+    {
+      return $this->profile?->type === 'admin';
+    }
     
     public function languages(){
       return $this->hasMany(UserLanguages::class);

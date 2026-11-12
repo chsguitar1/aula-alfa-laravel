@@ -17,6 +17,11 @@ class DatabaseSeeder extends Seeder
     {
         User::factory(20)->create();
 
+        // Administrador de demonstração: somente em ambiente local.
+        if (app()->environment('local')) {
+            $this->call(AdminUserSeeder::class);
+        }
+
         // User::factory()->create([
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
