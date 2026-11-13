@@ -23,7 +23,7 @@ class UserController extends Controller
    public function show($id)
    {
     $user = User::find($id);
-  
+   
     return view('user.show',[
         'user' => $user]);
 
@@ -31,7 +31,7 @@ class UserController extends Controller
 
    public function register()
    {
-       return view('user.create');
+    return view('user.create');
    }
 
    public function store(Request $request)
@@ -50,6 +50,28 @@ class UserController extends Controller
 
     return redirect()->route('login')->with('success', 'Cadastro realizado com sucesso. Faça login para continuar.');
 
+   }
+
+   public function forgotPassword()
+   {
+    return view('user.forgot-password');
+   }
+
+   public function updatePassword(Request $request)
+   {
+    $input = $request->validate([
+        'email' => 'required|string|email|max:255|exists:users,email',
+        'password' => 'required|string|min:8|confirmed',
+    ]);
+
+    $user = User::where('email', $input['email'])->firstOrFail();
+    // o cast 'hashed' do model User já faz o hash da senha
+    $user->password = $input['password'];
+    $user->save();
+
+    return redirect()
+        ->route('users.forgot-password')
+        ->with('status', 'Senha alterada com sucesso!');
    }
 
 
