@@ -13,6 +13,9 @@ Route::get('register', [UserController::class, 'register'])->name('register');
 
 Route::post('store', [UserController::class, 'store'])->name('users.store');
 
+Route::get('forgot-password', [UserController::class, 'forgotPassword'])->name('users.forgot-password');
+Route::post('forgot-password', [UserController::class, 'updatePassword'])->name('users.update-password');
+
 // Protege todas as rotas administrativas com a verificação de perfil admin.
 Route::prefix('admin')->middleware(EnsureAdmin::class)->group(function () {
     Route::get('/users', [UserController::class, 'index'])->name('admin.users.index');
