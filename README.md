@@ -56,3 +56,15 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## Autenticação e área administrativa (atividade prática)
+
+- Login: `GET /login` e `POST /login`.
+- Cadastro público: `GET /register` e `POST /store` (cria usuário comum).
+- Logout: `POST /logout` com CSRF.
+- Área administrativa: rotas `/admin/*`, protegidas por `auth` e `EnsureAdmin`.
+- O login limita a cinco tentativas por email/IP em 60 segundos; a rota também possui throttle HTTP.
+- Conta local de demonstração criada por `php artisan db:seed`: `admin@exemplo.com` / `Admin123!`.
+  Altere essa senha se usar o ambiente fora da demonstração local.
+
+Para iniciar em ambiente local: `php artisan migrate`, `php artisan db:seed`, `npm install`, `npm run build` e `php artisan serve`.
