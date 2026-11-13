@@ -12,7 +12,6 @@
 
                 <form action="{{ route('users.store') }}" method="post" enctype="multipart/form-data">
                     @csrf
-                    {{ $errors->any() }}
                     @if ($errors->any())
                         @foreach ($errors->all() as $error)
                             <div class="error">{{ $error }}</div>
