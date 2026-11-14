@@ -129,7 +129,7 @@
                         @foreach (['PHP', 'JavaScript', 'Python', 'Java', 'C#'] as $language)
                             <div class="form-check mb-3">
                                 {{-- <input class="form-check-input  @error('languages') is-invalid @enderror" type="checkbox"
-                                    id="check-{{ $language }}" name="languages[][language]"
+                                    id="check-{{ $language }}" name="languages[]"
                                     value="{{ $language }}" @if ($user->languages->contains('language', $language)) checked @endif> --}}
 
                                     <input class="form-check-input  @error('languages') is-invalid @enderror" type="checkbox"

@@ -3,14 +3,15 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Login</title>
+    <title>Entrar | {{ config('app.name') }}</title>
     @vite('resources/scss/app.scss')
 </head>
-<body class="login-page bg-body-secondary">
-    <main class="login-box">
-        <div class="card">
-            <div class="card-body login-card-body">
-                <p class="login-box-msg">Entre com seu email e senha</p>
+<body class="bg-body-tertiary">
+    <main class="container min-vh-100 d-flex align-items-center justify-content-center py-5">
+        <section class="card border-0 shadow-sm w-100" style="max-width: 28rem;" aria-labelledby="login-title">
+            <div class="card-body p-4 p-md-5">
+                <h1 id="login-title" class="h3 text-center mb-2">Entrar</h1>
+                <p class="text-body-secondary text-center mb-4">Acesse sua conta para continuar.</p>
 
                 @if (session('success'))
                     <div class="alert alert-success" role="alert">
@@ -19,60 +20,63 @@
                 @endif
 
                 <form action="{{ route('login.store') }}" method="POST">
-                    {{-- Protege o envio do formulário contra requisições CSRF. --}}
                     @csrf
 
-                    <label class="visually-hidden" for="email">Email</label>
-                    <div class="input-group mb-3">
-                        {{-- Mantém o email após um erro, sem preencher novamente a senha. --}}
+                    @if ($errors->has('email') && ! old('email'))
+                        <div class="alert alert-danger" role="alert">
+                            {{ $errors->first('email') }}
+                        </div>
+                    @endif
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label">E-mail</label>
                         <input
                             id="email"
                             name="email"
                             type="email"
                             value="{{ old('email') }}"
-                            class="form-control @error('email') is-invalid @enderror"
-                            placeholder="Email"
+                            class="form-control form-control-lg @error('email') is-invalid @enderror"
+                            placeholder="voce@exemplo.com"
                             autocomplete="email"
                             required
                             autofocus
-                        />
-                        <div class="input-group-text">
-                            <span class="bi bi-envelope"></span>
-                        </div>
+                        >
                         @error('email')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
-                    <label class="visually-hidden" for="password">Senha</label>
-                    <div class="input-group mb-3">
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Senha</label>
                         <input
                             id="password"
                             name="password"
                             type="password"
-                            class="form-control @error('password') is-invalid @enderror"
-                            placeholder="Senha"
+                            class="form-control form-control-lg @error('password') is-invalid @enderror"
+                            placeholder="Digite sua senha"
                             autocomplete="current-password"
                             required
-                        />
-                        <div class="input-group-text">
-                            <span class="bi bi-lock-fill"></span>
-                        </div>
+                        >
                         @error('password')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
                     <div class="d-grid">
-                        <button type="submit" class="btn btn-primary">Entrar</button>
+                        <button type="submit" class="btn btn-primary btn-lg">Entrar</button>
                     </div>
                 </form>
 
-                <p class="mt-3 mb-0 text-center">
-                    Ainda não tem uma conta? <a href="{{ route('register') }}">Cadastre-se</a>
+                <p class="text-center mt-4 mb-2">
+                    <a href="{{ route('password.request') }}" class="link-primary text-decoration-none">Esqueceu sua senha?</a>
+                </p>
+
+                <p class="text-center mb-0">
+                    Ainda não tem uma conta?
+                    <a href="{{ route('register') }}" class="link-primary text-decoration-none">Cadastre-se</a>
                 </p>
             </div>
-        </div>
+        </section>
     </main>
 </body>
 </html>

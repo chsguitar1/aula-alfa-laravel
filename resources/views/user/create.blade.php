@@ -12,6 +12,10 @@
             <div class="card-body register-card-body">
                 <p class="register-box-msg">Preencha os campos para se cadastrar</p>
 
+                @if (session('success'))
+                    <div class="alert alert-success" role="alert">{{ session('success') }}</div>
+                @endif
+
                 <form action="{{ route('users.store') }}" method="POST">
                     @csrf
 
