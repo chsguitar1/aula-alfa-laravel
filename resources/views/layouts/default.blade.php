@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-BR">
   <!--begin::Head-->
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>AdminLTE v4 | Dashboard</title>
+    <title>@yield('title', 'AdminLTE v4 | Dashboard')</title>
     @vite('resources/scss/app.scss')
    
 
@@ -71,7 +71,6 @@
     <!--begin::Accessibility Features-->
     <!-- Skip links will be dynamically added by accessibility.js -->
     <meta name="supported-color-schemes" content="light dark" />
-    <link rel="preload" href="./css/adminlte.css" as="style" />
     <!--end::Accessibility Features-->
 
     <!--begin::Fonts-->
@@ -108,6 +107,11 @@
         <div class="app-content">
           <!--begin::Container-->
           <div class="container-fluid">
+            @if (session('success'))
+              <div class="alert alert-success" role="alert">
+                {{ session('success') }}
+              </div>
+            @endif
             <!--begin::Row-->
             @yield('content')
             
@@ -141,7 +145,6 @@
       crossorigin="anonymous"
     ></script>
     <!--end::Required Plugin(Bootstrap 5)--><!--begin::Required Plugin(AdminLTE)-->
-    <script src="./js/adminlte.js"></script>
     <!--end::Required Plugin(AdminLTE)-->
     <!--begin::OverlayScrollbars Configure-->
     <script>
@@ -159,10 +162,10 @@
 
         if (
           sidebarWrapper &&
-          OverlayScrollbarsGlobal?.OverlayScrollbars !== undefined &&
+          globalThis.OverlayScrollbarsGlobal?.OverlayScrollbars !== undefined &&
           !isMobile
         ) {
-          OverlayScrollbarsGlobal.OverlayScrollbars(sidebarWrapper, {
+          globalThis.OverlayScrollbarsGlobal.OverlayScrollbars(sidebarWrapper, {
             scrollbars: {
               theme: Default.scrollbarTheme,
               autoHide: Default.scrollbarAutoHide,
@@ -212,6 +215,7 @@
      in <head> stays inline, because it must run before first paint. -->
     <!--end::Color Mode Toggle-->
 
+    @if (request()->routeIs('home'))
     <!-- OPTIONAL SCRIPTS -->
 
     <!-- sortablejs -->
@@ -404,6 +408,7 @@
       const sparkline3 = new ApexCharts(document.querySelector('#sparkline-3'), option_sparkline3);
       sparkline3.render();
     </script>
+    @endif
     <!--end::Script-->
   </body>
   <!--end::Body-->

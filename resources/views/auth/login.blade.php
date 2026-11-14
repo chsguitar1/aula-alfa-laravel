@@ -18,13 +18,17 @@
                     </div>
                 @endif
 
+                @if ($errors->any())
+                    <div class="alert alert-danger" role="alert">
+                        {{ $errors->first() ?: 'Credenciais inválidas.' }}
+                    </div>
+                @endif
+
                 <form action="{{ route('login.store') }}" method="POST">
-                    {{-- Protege o envio do formulário contra requisições CSRF. --}}
                     @csrf
 
                     <label class="visually-hidden" for="email">Email</label>
                     <div class="input-group mb-3">
-                        {{-- Mantém o email após um erro, sem preencher novamente a senha. --}}
                         <input
                             id="email"
                             name="email"
@@ -39,9 +43,6 @@
                         <div class="input-group-text">
                             <span class="bi bi-envelope"></span>
                         </div>
-                        @error('email')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
                     </div>
 
                     <label class="visually-hidden" for="password">Senha</label>
@@ -58,9 +59,6 @@
                         <div class="input-group-text">
                             <span class="bi bi-lock-fill"></span>
                         </div>
-                        @error('password')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
                     </div>
 
                     <div class="d-grid">

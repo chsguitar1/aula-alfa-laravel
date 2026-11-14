@@ -12,6 +12,16 @@
             <div class="card-body register-card-body">
                 <p class="register-box-msg">Preencha os campos para se cadastrar</p>
 
+                @if ($errors->any())
+                    <div class="alert alert-danger" role="alert">
+                        <ul class="mb-0 ps-3">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
                 <form action="{{ route('users.store') }}" method="POST">
                     @csrf
 

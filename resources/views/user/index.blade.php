@@ -1,7 +1,11 @@
 @extends('layouts.default')
+@section('title', 'Lista de usuários do Sistema')
 @section('classe-body', 'register-page', 'register-page bg-body-secondary')
 @section('content')
-  
+    <div class="mb-3">
+        <a href="{{ route('admin.users.create') }}" class="btn btn-success">Cadastrar usuário</a>
+    </div>
+
     <table class="table table-bordered" role="table">
         <thead>
             <tr>
@@ -22,11 +26,11 @@
                 <td>{{ $user->email }}</td>
                 <td>
                     <a href="{{ route('admin.user.edit', $user->id) }}" class="btn btn-primary btn-sm">Editar</a>
-                    {{-- <form action="{{ route('admin.user.destroy', $user->id) }} " method="POST" style="display:inline;">
+                    <form action="{{ route('admin.user.destroy', $user->id) }}" method="POST" style="display:inline;">
                         @csrf
-                        @method('DELETE') --}}
+                        @method('DELETE')
                         <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
-                    {{-- </form> --}}
+                    </form>
                 </td>
             </tr>
             @endforeach
