@@ -116,11 +116,3 @@ Cadastro de usuário pelo painel, com retorno à lista e mensagem:
 Sexta tentativa de login dentro de 1 minuto:
 
 ![429 Too Many Requests](docs/screenshots/12-login-limite-tentativas-429.png)
-
-## Perguntas para reflexão
-
-- **Por que um usuário autenticado ainda pode receber 403?** Autenticação diz *quem* é o usuário; autorização diz *o que* ele pode fazer. Estar logado não implica ter perfil `admin`.
-- **Qual o risco de confiar apenas em um botão escondido?** Esconder o link não protege a rota: qualquer um pode digitar a URL ou enviar a requisição diretamente. A proteção precisa estar no servidor (middleware).
-- **Por que logout deve ser `POST` com CSRF?** Um `GET` pode ser disparado por outro site (uma `<img src="/logout">`), deslogando o usuário sem que ele queira. `POST` com token CSRF garante que a ação partiu da própria aplicação.
-- **Como o limite de tentativas ajuda e quais suas limitações?** Veja a seção [Limite de tentativas de login](#limite-de-tentativas-de-login).
-- **Como provisionar o primeiro administrador sem expor ao público?** Por um seeder executado apenas em ambiente local (ou um comando artisan/tinker no servidor), nunca por um formulário que aceite `type = admin`.
