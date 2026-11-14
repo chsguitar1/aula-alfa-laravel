@@ -7,6 +7,77 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+## Validação da atividade: autenticação e área administrativa
+
+Os cenários abaixo foram executados no navegador com Playwright. As capturas estão em [`docs/capturas`](docs/capturas).
+
+### 1. Visitante acessando páginas protegidas
+
+Ao tentar acessar `/` ou `/admin/users` sem autenticação, o visitante é redirecionado para `/login`.
+
+![Visitante redirecionado para o formulário de login](docs/capturas/01-visitante-redirecionado-login.png)
+
+### 2. Credenciais inválidas
+
+Uma tentativa com senha incorreta exibe uma mensagem genérica, mantém o email e limpa a senha.
+
+![Mensagem de credenciais inválidas](docs/capturas/02-credenciais-invalidas.png)
+
+### 3. Cadastro de uma conta comum
+
+O formulário independente solicita nome, email e senha. Após o cadastro, o visitante retorna ao login com uma confirmação, sem receber privilégios administrativos.
+
+![Formulário de cadastro](docs/capturas/03-formulario-cadastro.png)
+
+![Confirmação do cadastro e retorno ao login](docs/capturas/04-cadastro-concluido.png)
+
+### 4. Login da conta comum
+
+Com as credenciais da conta cadastrada, o login encaminha o usuário para a página inicial (`/`).
+
+![Página inicial após o login de uma conta comum](docs/capturas/05-inicio-usuario-comum.png)
+
+### 5. Acesso administrativo negado
+
+Ao acessar `/admin/users`, uma conta comum autenticada recebe uma resposta HTTP **403**.
+
+![Resposta 403 para uma conta sem perfil administrativo](docs/capturas/06-acesso-administrativo-negado-403.png)
+
+### 6. Logout
+
+O botão **Sair** envia um formulário POST com CSRF, encerra a sessão e redireciona para o login.
+
+![Retorno ao login após encerrar a sessão](docs/capturas/07-logout-concluido.png)
+
+### 7. Login do administrador e acesso ao painel
+
+Uma conta com perfil `type = admin` é encaminhada para `/admin/users` e pode acessar as telas administrativas.
+
+![Lista de usuários acessada pelo administrador](docs/capturas/08-painel-administrador.png)
+
+![Tela de edição acessada pelo administrador](docs/capturas/09-edicao-no-painel.png)
+
+### 8. Login em tela de celular
+
+![Formulário de login em uma tela de 390 por 844 pixels](docs/capturas/10-login-celular.png)
+
+### Verificações complementares
+
+A validação automatizada com `php artisan test --compact` passou com **26 testes e 96 asserções**. O build com `npm run build` também foi concluído. As capturas demonstram os estados visuais; os testes HTTP verificam autenticação, autorização, sessão, validação e persistência.
+
+O login permite **5 envios por minuto por combinação de email e IP**. A sexta tentativa dentro desse período recebe HTTP **429**, e novas tentativas são permitidas após a expiração da janela.
+
+Para provisionar as contas de demonstração em ambiente `local`, execute após as migrations:
+
+```bash
+php artisan db:seed --class=DemoUsersSeeder
+```
+
+| Conta | Email | Senha local de demonstração |
+| --- | --- | --- |
+| Administrador | `admin@example.test` | `DemoLocal123!` |
+| Usuário comum | `user@example.test` | `DemoLocal123!` |
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
