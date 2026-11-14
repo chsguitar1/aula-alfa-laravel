@@ -55,10 +55,11 @@ class UserController extends Controller
 
    public function edit($id)
    {
-       $user = User::find($id);
-       $user->load('profile','languages');
-       return view('user.edit', [
-           'user' => $user
+        $user = User::findOrFail($id);
+        $user->load('profile');
+
+        return view('user.edit', [
+            'user' => $user
        ]);
    }
 
@@ -83,6 +84,10 @@ class UserController extends Controller
 
    public function updateProfile(User $user ,Request $request)
    {
+     // Impede alterações no perfil de uma conta administrativa.
+    if ($user->profile?->type === 'admin') {
+        abort(403, 'O perfil do administrador não pode ser alterado por esta tela.');
+    }
        
        $input = $request->validate([
     'type' => 'required|string|in:PJ,PF',
@@ -97,26 +102,21 @@ class UserController extends Controller
        return redirect()->route('admin.users.index')->with('success', 'Perfil atualizado com sucesso!');
    }
 
-   public function updateLanguages(User $user, Request $request)
-   {
-       $input = $request->validate([
-           'languages' => 'nullable|array',
-           'languages.*' => 'string|in:PHP,JavaScript,Python,Java,C#',
-       ]);
-;
+   public function destroy(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
 
-    //$user->languages()->createMany($input['languages']);
-    $user->languages()->createMany(array_map(fn($language) => ['language' => $language], $input['languages'] ?? []));
+        // Impede que o administrador exclua a própria conta.
+        if ($request->user()->id === $user->id) {
+            return redirect()->route('admin.users.index')
+                ->with('error', 'Você não pode excluir sua própria conta.');
+        }
 
-       return redirect()->route('admin.users.index')->with('success', 'Linguagens atualizadas com sucesso!');
-   }
+        $user->delete();
 
-   public function destroy($id)
-   {
-       $user = User::find($id);
-       $user->delete();
-       return redirect()->route('admin.users.index')->with('success', 'Usuário excluído com sucesso!');
-   }
+        return redirect()->route('admin.users.index')
+            ->with('success', 'Usuário excluído com sucesso!');
+    }
 
 
 }

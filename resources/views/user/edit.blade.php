@@ -60,6 +60,9 @@
                     <!--end::Row-->
                 </form>
                 <br>
+
+                @if ($user->profile?->type !== 'admin')
+
                 <form action="{{ route('admin.user.updateProfile', $user->id) }}" method="POST"
                     enctype="multipart/form-data">
                     @csrf
@@ -114,58 +117,11 @@
                     <!--end::Row-->
                 </form>
 
+            @endif
+
                 <br>
 
-                <form action="{{ route('admin.user.updateLanguages', $user->id) }}" method="POST"
-                    enctype="multipart/form-data">
-                    @csrf
-                    @method('PUT')
-
-                    <div class="card-header">
-                        Linguagens de programação
-                    </div>
-
-                    <div class="card-body">
-                        @foreach (['PHP', 'JavaScript', 'Python', 'Java', 'C#'] as $language)
-                            <div class="form-check mb-3">
-                                {{-- <input class="form-check-input  @error('languages') is-invalid @enderror" type="checkbox"
-                                    id="check-{{ $language }}" name="languages[][language]"
-                                    value="{{ $language }}" @if ($user->languages->contains('language', $language)) checked @endif> --}}
-
-                                    <input class="form-check-input  @error('languages') is-invalid @enderror" type="checkbox"
-                                    id="check-{{ $language }}" name="languages[][language]"
-                                    value="{{ $language }}" @checked(in_array($language, $user->languages->pluck('language')->toArray()))>
-                                <label class="form-check-label"
-                                    for="check-{{ $language }}">{{ $language }}</label>
-                            </div>
-                            @if ($loop->last)
-                                <div class="invalid-feedback">
-                                    @error('languages')
-                                        {{ $message }}
-                                    @enderror
-                                </div>
-                            @endif
-                        @endforeach
-
-                    </div>
-                    <div class="card-footer"></div>
-
-
-
-                    <!--begin::Row-->
-                    <div class="row" flex="true" style="display: flex; justify-content: center;">
-
-                        <!-- /.col -->
-                        <div class="col-4">
-                            <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-primary">Enviar</button>
-                            </div>
-                        </div>
-                        <!-- /.col -->
-                    </div>
-                    <!--end::Row-->
-                        </form>
-                        <!-- /.social-auth-links -->
+               <!-- /.social-auth-links -->
 
                     </div>
                     <!-- /.register-card-body -->

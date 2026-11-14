@@ -106,10 +106,25 @@
         <!--end::App Content Header-->
         <!--begin::App Content-->
         <div class="app-content">
-          <!--begin::Container-->
-          <div class="container-fluid">
-            <!--begin::Row-->
-            @yield('content')
+    <!--begin::Container-->
+    <div class="container-fluid">
+
+        @if (session('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+            </div>
+        @endif
+
+        @if (session('error'))
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+            </div>
+        @endif
+
+        <!--begin::Row-->
+        @yield('content')
             
             <!-- /.row (main row) -->
           </div>

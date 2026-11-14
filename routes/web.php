@@ -1,4 +1,3 @@
-
 <?php
 
 use Illuminate\Support\Facades\Route;
@@ -30,10 +29,28 @@ Route::post('/logout', [AuthController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
 
+
 // Rotas administrativas: somente administradores.
 Route::prefix('admin')
     ->middleware(EnsureAdmin::class)
     ->group(function () {
+        // Listar usuários
         Route::get('/users', [UserController::class, 'index'])
             ->name('admin.users.index');
+
+        // Exibir formulário de edição
+        Route::get('/users/{id}/edit', [UserController::class, 'edit'])
+            ->name('admin.user.edit');
+
+        // Atualizar dados do usuário
+        Route::put('/users/{id}', [UserController::class, 'update'])
+            ->name('admin.user.update');
+
+        // Atualizar perfil
+        Route::put('/users/{user}/profile', [UserController::class, 'updateProfile'])
+            ->name('admin.user.updateProfile');
+
+        // Excluir usuário
+        Route::delete('/users/{id}', [UserController::class, 'destroy'])
+            ->name('admin.user.destroy');
     });
