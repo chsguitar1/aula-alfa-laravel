@@ -85,12 +85,8 @@ class UserController extends Controller
    {
        
        $input = $request->validate([
-           'type' => 'required|string|in:PJ,PF',
-           'address' => [
-               'nullable',
-               'string',
-               'max:255'
-           ],
+    'type' => 'required|string|in:PJ,PF',
+    'address' => 'required|string|max:255',
        ]);
        
        Profile::updateOrCreate(
