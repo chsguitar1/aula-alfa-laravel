@@ -107,6 +107,11 @@
         <div class="app-content">
           <!--begin::Container-->
           <div class="container-fluid">
+            @if (session('success'))
+              <div class="alert alert-success" role="alert">
+                {{ session('success') }}
+              </div>
+            @endif
             <!--begin::Row-->
             @yield('content')
             

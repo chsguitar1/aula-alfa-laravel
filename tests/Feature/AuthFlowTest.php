@@ -199,6 +199,10 @@ it('permite que um administrador cadastre usuário pelo painel', function () {
         ->assertRedirect(route('admin.users.index'))
         ->assertSessionHas('success', 'Usuário criado com sucesso!');
 
+    $this->get(route('admin.users.index'))
+        ->assertOk()
+        ->assertSee('Usuário criado com sucesso!');
+
     $this->assertDatabaseHas('users', ['email' => 'admin-created@example.com']);
     $this->assertDatabaseMissing('profile', [
         'user_id' => User::query()->where('email', 'admin-created@example.com')->value('id'),
