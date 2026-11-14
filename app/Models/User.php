@@ -42,6 +42,12 @@ class User extends Authenticatable
         return self::all();
     }
 
+    /** Autorização: somente perfis com type = admin acessam a área administrativa. */
+    public function isAdmin(): bool
+    {
+        return $this->profile?->type === 'admin';
+    }
+
     public function profile(){
       return $this->hasOne(Profile::class);
     }

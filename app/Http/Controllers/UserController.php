@@ -107,9 +107,9 @@ class UserController extends Controller
            'languages' => 'nullable|array',
            'languages.*' => 'string|in:PHP,JavaScript,Python,Java,C#',
        ]);
-;
 
-    //$user->languages()->createMany($input['languages']);
+    // Substitui a seleção anterior (sem isso, cada envio duplicaria as linguagens).
+    $user->languages()->delete();
     $user->languages()->createMany(array_map(fn($language) => ['language' => $language], $input['languages'] ?? []));
 
        return redirect()->route('admin.users.index')->with('success', 'Linguagens atualizadas com sucesso!');
@@ -117,7 +117,7 @@ class UserController extends Controller
 
    public function destroy($id)
    {
-       $user = User::find($id);
+       $user = User::findOrFail($id);
        $user->delete();
        return redirect()->route('admin.users.index')->with('success', 'Usuário excluído com sucesso!');
    }

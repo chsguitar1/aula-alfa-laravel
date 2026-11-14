@@ -1,6 +1,8 @@
 @extends('layouts.default')
 @section('classe-body', 'register-page', 'register-page bg-body-secondary')
+@section('title', 'Lista de usuários')
 @section('content')
+    <a href="{{ route('register') }}" class="btn btn-success mb-3">Novo usuário</a>
   
     <table class="table table-bordered" role="table">
         <thead>
@@ -22,11 +24,15 @@
                 <td>{{ $user->email }}</td>
                 <td>
                     <a href="{{ route('admin.user.edit', $user->id) }}" class="btn btn-primary btn-sm">Editar</a>
-                    {{-- <form action="{{ route('admin.user.destroy', $user->id) }} " method="POST" style="display:inline;">
-                        @csrf
-                        @method('DELETE') --}}
-                        <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
-                    {{-- </form> --}}
+                    {{-- O admin não vê o botão Excluir na própria linha, para não apagar a própria conta. --}}
+                    @if ($user->id !== auth()->id())
+                        <form action="{{ route('admin.user.destroy', $user->id) }}" method="POST" style="display:inline;"
+                              onsubmit="return confirm('Excluir este usuário?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
+                        </form>
+                    @endif
                 </td>
             </tr>
             @endforeach

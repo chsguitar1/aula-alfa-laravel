@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Cadastro</title>
-    @vite('resources/scss/app.scss')
+    @vite(['resources/scss/app.scss', 'resources/js/app.js'])
 </head>
 <body class="register-page bg-body-secondary">
     <main class="register-box">
