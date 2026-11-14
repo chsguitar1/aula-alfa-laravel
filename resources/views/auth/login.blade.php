@@ -19,7 +19,15 @@
                     </div>
                 @endif
 
-                <div>
+                <form action="{{ route('login.store') }}" method="POST">
+                    @csrf
+
+                    @if ($errors->has('email') && ! old('email'))
+                        <div class="alert alert-danger" role="alert">
+                            {{ $errors->first('email') }}
+                        </div>
+                    @endif
+
                     <div class="mb-3">
                         <label for="email" class="form-label">E-mail</label>
                         <input
@@ -55,9 +63,9 @@
                     </div>
 
                     <div class="d-grid">
-                        <button type="button" class="btn btn-primary btn-lg">Entrar</button>
+                        <button type="submit" class="btn btn-primary btn-lg">Entrar</button>
                     </div>
-                </div>
+                </form>
 
                 <p class="text-center mt-4 mb-2">
                     <a href="{{ route('password.request') }}" class="link-primary text-decoration-none">Esqueceu sua senha?</a>

@@ -3,7 +3,7 @@
   <!--begin::Head-->
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>AdminLTE v4 | Dashboard</title>
+    <title>@yield('title', 'Painel administrativo') | {{ config('app.name') }}</title>
     @vite('resources/scss/app.scss')
    
 

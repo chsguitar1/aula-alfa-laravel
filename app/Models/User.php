@@ -7,6 +7,8 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -33,7 +35,7 @@ class User extends Authenticatable
     public function show_user($id)
     {
 
-        return  User::find($id);
+        return User::find($id);
 
     }
 
@@ -42,11 +44,13 @@ class User extends Authenticatable
         return self::all();
     }
 
-    public function profile(){
-      return $this->hasOne(Profile::class);
+    public function profile(): HasOne
+    {
+        return $this->hasOne(Profile::class);
     }
-    
-    public function languages(){
-      return $this->hasMany(UserLanguages::class);
+
+    public function languages(): HasMany
+    {
+        return $this->hasMany(UserLanguage::class);
     }
 }
