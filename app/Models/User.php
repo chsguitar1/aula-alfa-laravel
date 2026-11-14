@@ -46,7 +46,4 @@ class User extends Authenticatable
       return $this->hasOne(Profile::class);
     }
     
-    public function languages(){
-      return $this->hasMany(UserLanguages::class);
-    }
 }
