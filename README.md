@@ -92,11 +92,39 @@ mensagem genérica, preservação do email, rotação e continuidade da sessão,
 logout, CSRF, proteção da página inicial, expiração e isolamento do limite de
 tentativas por email/IP e carregamento dos scripts no layout compartilhado.
 
-### Integração pendente com o Dev 2
+### Cadastro e administração (Dev 2)
 
-O redirecionamento administrativo existe, mas a renderização da listagem depende
-da correção das rotas usadas pelas views, incluindo `admin.user.edit`.
-Também permanecem com o Dev 2: divergência `description`/`address` no perfil,
-compatibilidade entre `type=admin` e edição PJ/PF, provisionamento controlado do
-administrador de demonstração e a classe `UserLanguages` referenciada pelo model.
-Essas funcionalidades não fazem parte das correções do Dev 1.
+O cadastro independente em `GET /register` envia nome, email e senha (mínimo
+8 caracteres) para `POST /store`, com CSRF, email único e erros por campo.
+Somente esses três campos são aceitos: o cadastro público nunca cria perfil
+administrativo. O visitante retorna ao login com confirmação; um administrador
+que cadastrar pelo painel retorna à listagem.
+
+Todas as rotas `/admin/*` usam `EnsureAdmin`: visitantes seguem para o login,
+contas comuns recebem 403 e contas com `profile.type = admin` acessam o painel.
+A edição PF/PJ preserva o tipo de administradores existentes. As rotas utilizadas
+pelas views foram integradas com o login do Dev 1.
+
+O model `Profile` usa a tabela existente `profile`. Uma nova migration adiciona
+`address` sem remover `description` nem modificar migrations compartilhadas.
+Outra cria `user_languages`, com exclusão em cascata e linguagens únicas por
+usuário. Em um banco local já configurado, execute `php artisan migrate` para
+aplicar somente as migrations pendentes.
+
+#### Administrador local de demonstração
+
+Configure localmente `APP_ENV=local`, `DEMO_ADMIN_EMAIL` e
+`DEMO_ADMIN_PASSWORD` (mínimo 12 caracteres), sem versionar os valores.
+`DEMO_ADMIN_NAME` é opcional. Em seguida execute:
+
+```bash
+php artisan db:seed --class=DemoAdminSeeder
+```
+
+O seeder recusa outros ambientes e credenciais ausentes. Executá-lo novamente
+não redefine a senha; ele também recusa promover uma conta comum existente.
+
+Validação: `php artisan test --compact` e `npm run build`. Os testes do Dev 2
+usam banco SQLite em memória e cobrem cadastro, validação, CSRF, privilégios,
+CRUD administrativo, perfis, linguagens, migração compatível, seeder e o ciclo
+cadastro → login → acesso negado/painel → logout integrado ao Dev 1.

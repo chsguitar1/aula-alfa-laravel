@@ -1,9 +1,9 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\EnsureAdmin;
+use Illuminate\Support\Facades\Route;
 
 // Página inicial protegida.
 Route::get('/', function () {
@@ -35,4 +35,11 @@ Route::prefix('admin')
     ->group(function () {
         Route::get('/users', [UserController::class, 'index'])
             ->name('admin.users.index');
+        Route::get('/users/create', [UserController::class, 'register'])->name('admin.user.create');
+        Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('admin.user.edit');
+        Route::get('/users/{user}', [UserController::class, 'show'])->name('admin.user.show');
+        Route::put('/users/{user}', [UserController::class, 'update'])->name('admin.user.update');
+        Route::put('/users/{user}/profile', [UserController::class, 'updateProfile'])->name('admin.user.updateProfile');
+        Route::put('/users/{user}/languages', [UserController::class, 'updateLanguages'])->name('admin.user.updateLanguages');
+        Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('admin.user.destroy');
     });

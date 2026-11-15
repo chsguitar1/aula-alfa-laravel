@@ -3,14 +3,14 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Cadastro</title>
+    <title>Registro dos Caçadores | Arquivos de Yharnam</title>
     @vite('resources/scss/app.scss')
 </head>
-<body class="register-page bg-body-secondary">
+<body class="register-page bg-dark text-light">
     <main class="register-box">
-        <div class="card">
+        <div class="card bg-dark border-danger">
             <div class="card-body register-card-body">
-                <p class="register-box-msg">Preencha os campos para se cadastrar</p>
+                <p class="register-box-msg">Registro dos Caçadores - entre no Sonho do Caçador</p>
 
                 <form action="{{ route('users.store') }}" method="POST">
                     @csrf
@@ -75,7 +75,7 @@
                     </div>
 
                     <div class="d-grid">
-                        <button type="submit" class="btn btn-primary">Cadastrar</button>
+                        <button type="submit" class="btn btn-danger">Cadastrar</button>
                     </div>
                 </form>
 

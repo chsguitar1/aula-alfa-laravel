@@ -1,15 +1,18 @@
 @extends('layouts.default')
 @section('classe-body', 'register-page', 'register-page bg-body-secondary')
 @section('content')
+    @if ($errors->any())
+        <div class="alert alert-danger" role="alert"><ul>@foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>
+    @endif
     <div class="row justify-content-center">
         <div class="col-12 col-xl-9">
             <main class="register-box w-100 mx-auto" style="max-width: 900px;">
                 <h1 class="register-logo text-center">
-                    <a href="../index2.html"><b>Bem vindo</b></a>
+                    <a href="{{ route('admin.users.index') }}" class="text-danger"><b>Registro dos Caçadores</b></a>
                 </h1>
                 <div class="card">
                     <div class="card-body register-card-body">
-                        <p class="register-box-msg">Preencha os campos para se registrar</p>
+                        <p class="register-box-msg">Edite os registros do caçador</p>
 
                         <form action="{{ route('admin.user.update', $user->id) }}" method="POST" enctype="multipart/form-data">
                     @csrf
@@ -22,7 +25,7 @@
                         <div class="input-group mb-3">
                             <input id="name" name="name" type="text"
                                 class="form-control @error('name') is-invalid @enderror" placeholder="Nome"
-                                value="{{ $user->name }}" />
+                                value="{{ old('name', $user->name) }}" />
                             <div class="input-group-text">
                                 <span class="bi bi-person"></span>
                             </div>
@@ -31,7 +34,7 @@
                         <div class="input-group mb-3">
                             <input id="email" name="email" type="email"
                                 class="form-control @error('email') is-invalid @enderror" placeholder="Email"
-                                value="{{ $user->email }}" />
+                                value="{{ old('email', $user->email) }}" />
                             <div class="input-group-text">
                                 <span class="bi bi-envelope"></span>
                             </div>
@@ -68,7 +71,10 @@
                         Perfil
                     </div>
                     <div class="card-body">
-                        <label for="type">Tipo de pessoa</label>
+                        @if ($user->profile?->type === 'admin')
+                            <p class="text-danger">Administrador: a edição do endereço preserva esse acesso.</p>
+                        @endif
+                        <label for="type">Tipo de pessoa (contas comuns)</label>
                         <select name="type" class="form-control @error('type') is-invalid @enderror">
                             @foreach (['PJ', 'PF'] as $type)
                                 <option value="{{ $type }}" @selected((old('type') ?? $user->profile?->type) == $type)>
@@ -129,12 +135,12 @@
                         @foreach (['PHP', 'JavaScript', 'Python', 'Java', 'C#'] as $language)
                             <div class="form-check mb-3">
                                 {{-- <input class="form-check-input  @error('languages') is-invalid @enderror" type="checkbox"
-                                    id="check-{{ $language }}" name="languages[][language]"
+                                    id="check-{{ $language }}" name="languages[]"
                                     value="{{ $language }}" @if ($user->languages->contains('language', $language)) checked @endif> --}}
 
                                     <input class="form-check-input  @error('languages') is-invalid @enderror" type="checkbox"
-                                    id="check-{{ $language }}" name="languages[][language]"
-                                    value="{{ $language }}" @checked(in_array($language, $user->languages->pluck('language')->toArray()))>
+                                    id="check-{{ $language }}" name="languages[]"
+                                    value="{{ $language }}" @checked(in_array($language, old('languages', $user->languages->pluck('language')->toArray())))>
                                 <label class="form-check-label"
                                     for="check-{{ $language }}">{{ $language }}</label>
                             </div>
