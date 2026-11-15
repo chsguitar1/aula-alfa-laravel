@@ -8,9 +8,11 @@ class Profile extends Model
 {
     protected $table = 'profile';
 
+    protected $attributes = ['description' => ''];
+
     protected $fillable = [
         'type',
         'address',
-        'user_id'
+        'user_id',
     ];
 }

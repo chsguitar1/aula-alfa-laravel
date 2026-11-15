@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Login</title>
+    <title>Login | Arquivos de Yharnam</title>
     @vite('resources/scss/app.scss')
 </head>
 <body class="login-page bg-body-secondary">

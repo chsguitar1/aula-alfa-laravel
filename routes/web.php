@@ -1,20 +1,45 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Models\User;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
+use App\Http\Middleware\EnsureAdmin;
+use Illuminate\Support\Facades\Route;
 
+// Página inicial protegida.
 Route::get('/', function () {
     return view('welcome');
-})->middleware('autenyticado');
+})->middleware('auth')->name('home');
 
+// Login.
+Route::get('/login', [AuthController::class, 'showLogin'])
+    ->name('login');
 
-Route::get('register', [UserController::class, 'register'])->name('register');
+Route::post('/login', [AuthController::class, 'login'])
+    ->name('login.store');
 
-Route::post('store', [UserController::class, 'store'])->name('users.store');
+// Logout.
+Route::post('/logout', [AuthController::class, 'logout'])
+    ->middleware('auth')
+    ->name('logout');
 
-// Protege todas as rotas administrativas com a verificação de perfil admin.
-Route::prefix('admin')->middleware(EnsureAdmin::class)->group(function () {
-    Route::get('/users', [UserController::class, 'index'])->name('admin.users.index');
-   
-});
+// Cadastro (Dev 2).
+Route::get('/register', [UserController::class, 'register'])
+    ->name('register');
+
+Route::post('/store', [UserController::class, 'store'])
+    ->name('users.store');
+
+// Área administrativa (Dev 2).
+Route::prefix('admin')
+    ->middleware(EnsureAdmin::class)
+    ->group(function () {
+        Route::get('/users', [UserController::class, 'index'])
+            ->name('admin.users.index');
+        Route::get('/users/create', [UserController::class, 'register'])->name('admin.user.create');
+        Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('admin.user.edit');
+        Route::get('/users/{user}', [UserController::class, 'show'])->name('admin.user.show');
+        Route::put('/users/{user}', [UserController::class, 'update'])->name('admin.user.update');
+        Route::put('/users/{user}/profile', [UserController::class, 'updateProfile'])->name('admin.user.updateProfile');
+        Route::put('/users/{user}/languages', [UserController::class, 'updateLanguages'])->name('admin.user.updateLanguages');
+        Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('admin.user.destroy');
+    });
