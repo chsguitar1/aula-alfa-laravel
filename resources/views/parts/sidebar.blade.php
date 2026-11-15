@@ -2,7 +2,7 @@
 <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
     <div class="sidebar-brand">
         <a href="{{ route('home') }}" class="brand-link">
-            <span class="brand-text fw-light">Laravel</span>
+            <span class="brand-text fw-light">Arquivos de Yharnam</span>
         </a>
     </div>
 

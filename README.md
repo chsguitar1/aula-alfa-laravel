@@ -56,3 +56,47 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## Arquivos de Yharnam — autenticação (Dev 1)
+
+O login usa `GET /login` e `POST /login`, com formulário independente, validação,
+CSRF e mensagem genérica para credenciais inválidas. Somente o email é preservado
+após uma falha. O identificador da sessão é renovado ao entrar.
+Usuários comuns seguem para `/`; administradores (`profile.type = admin`) seguem
+para `/admin/users`, respeitando o destino interno salvo anteriormente.
+A página inicial exige autenticação. O formulário de saída usa `POST /logout`
+com CSRF, invalida a sessão, renova o token e retorna ao login; não há logout GET.
+
+### Limite de tentativas
+
+São permitidas cinco falhas de autenticação por combinação de email (convertido
+para minúsculas na chave do limitador) e IP. A janela de 60 segundos começa na
+primeira falha: novas falhas não prolongam essa janela. Após a quinta falha,
+as próximas tentativas são recusadas, mesmo com a senha correta, até expirar o
+prazo. A mensagem informa os segundos restantes. Um login bem-sucedido antes do
+bloqueio limpa o contador. Entradas que falham na validação do formulário não
+contam como falhas de autenticação. O estado usa o cache configurado no Laravel;
+um cache persistente e compartilhado é necessário entre processos/servidores.
+Este limite não impede tentativas distribuídas entre vários IPs ou emails.
+
+### Verificação sem alterar os dados locais
+
+Execute `php artisan test --compact` e `npm run build`.
+Os testes de autenticação usam SQLite `:memory:` e cache/sessão `array`; verificam
+essa configuração antes de acessar o banco. As contas são criadas por factories
+somente no banco de teste. Não é necessário executar seeders ou migrations no
+banco local para rodar os testes.
+
+A cobertura inclui login comum e administrativo (redirecionamento), validação,
+mensagem genérica, preservação do email, rotação e continuidade da sessão,
+logout, CSRF, proteção da página inicial, expiração e isolamento do limite de
+tentativas por email/IP e carregamento dos scripts no layout compartilhado.
+
+### Integração pendente com o Dev 2
+
+O redirecionamento administrativo existe, mas a renderização da listagem depende
+da correção das rotas usadas pelas views, incluindo `admin.user.edit`.
+Também permanecem com o Dev 2: divergência `description`/`address` no perfil,
+compatibilidade entre `type=admin` e edição PJ/PF, provisionamento controlado do
+administrador de demonstração e a classe `UserLanguages` referenciada pelo model.
+Essas funcionalidades não fazem parte das correções do Dev 1.

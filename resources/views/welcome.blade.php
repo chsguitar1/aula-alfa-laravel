@@ -166,7 +166,7 @@
                                 <span class="direct-chat-timestamp float-start"> 23 Jan 2:05 pm </span>
                             </div>
                             <!-- /.direct-chat-infos -->
-                            <img class="direct-chat-img bb-avatar" src="{{ asset('images/bloodborne/boneca.png') }}" alt="message user image" />
+                            <img class="direct-chat-img bb-avatar" src="{{ asset('images/bloodborne/boneca.jpg') }}" alt="message user image" />
                             <!-- /.direct-chat-img -->
                             <div class="direct-chat-text">Bem-vindo ao Sonho do Caçador.</div>
                             <!-- /.direct-chat-text -->
@@ -196,7 +196,7 @@
                                 <span class="direct-chat-timestamp float-start"> 23 Jan 6:10 pm </span>
                             </div>
                             <!-- /.direct-chat-infos -->
-                            <img class="direct-chat-img bb-avatar" src="{{ asset('images/bloodborne/boneca.png') }}" alt="message user image" />
+                            <img class="direct-chat-img bb-avatar" src="{{ asset('images/bloodborne/boneca.jpg') }}" alt="message user image" />
                             <!-- /.direct-chat-img -->
                             <div class="direct-chat-text">Que o bom sangue guie seu caminho.</div>
                             <!-- /.direct-chat-text -->
@@ -367,3 +367,7 @@
     
 @endsection
 
+
+@push('scripts')
+    @include('parts.dashboard-scripts')
+@endpush
