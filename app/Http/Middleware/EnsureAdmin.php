@@ -10,13 +10,13 @@ class EnsureAdmin
 {
     public function handle(Request $request, Closure $next): Response
     {
-        // Visitantes precisam autenticar antes de acessar qualquer rota administrativa.
+        // Autenticação: visitantes precisam entrar antes de acessar qualquer rota administrativa.
         if (! $request->user()) {
             return redirect()->guest(route('login'));
         }
 
-        // Estar autenticado não basta: o perfil precisa ter o tipo administrativo.
-        abort_unless($request->user()->profile?->type === 'admin', 403);
+        // Autorização: estar autenticado não basta; o perfil precisa ser administrativo.
+        abort_unless($request->user()->isAdmin(), 403);
 
         return $next($request);
     }
